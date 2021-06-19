@@ -1,1 +1,7 @@
-# makingtetris
+# making_tetris
+
+## 테트리스 만들기 - 1인용
+
+## 테트리스 만들기 - 2인용
+
+## 테트리스 AI
