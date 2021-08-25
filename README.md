@@ -1,6 +1,7 @@
 # Server Tutorial
 
 ## Week 1.
+- Virtual Box 다운로드
 - Virtual Box 사용해서 우분투 다운로드
 - APM (Apache, Php, Mysql) 설치
 
