@@ -1,4 +1,4 @@
-# Server Tutorial
+# ★★ Server Tutorial ★★
 
 ## Week 1.
 - Virtual Box 다운로드
