@@ -27,7 +27,9 @@
 ## APM (Apache, Php, Mysql) 소스(컴파일)설치
 
 - **서버 구축**을 위한 APM 을 설치합니다.
-- [우분투 18.04에 APM 소스설치 가이드 메뉴얼](https://velog.io/@seowoo/Ubuntu-apm-%EC%86%8C%EC%8A%A4%EC%84%A4%EC%B9%98)
+  - [우분투 18.04에 Apache2 소스설치 가이드 메뉴얼](https://velog.io/@seowoo/Ubuntu-apm-%EC%86%8C%EC%8A%A4%EC%84%A4%EC%B9%98)
+  - [우분투 18.04에 Php 소스설치 가이드 메뉴얼](https://happylulurara.tistory.com/140)
+  - [우분투 18.04에 Mysql 소스설치 가이드 메뉴얼](https://hoing.io/archives/6985)
 
 각자의 우분투 버전에 맞는 키워드로 구글링을 합니다.   
 예를 들어, 18.04 버전을 설치했다면 'ubuntu 18.04 apm 소스 설치'라는 키워드로 검색해서 여러 블로그들을 참고해서 설치합니다.
