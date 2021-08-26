@@ -3,7 +3,7 @@
 ## Week 1.
 - Virtual Box 다운로드
 - Virtual Box 내에 가상 환경 생성 및 우분투 다운로드
-- 우분투 내에 APM (Apache, Php, Mysql) 설치
+- 우분투 내에 APM (Apache, Php, Mysql) 컴파일 설치
 
 ## Week 2.
 - Bitnami 설치 및 외부접속
