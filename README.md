@@ -6,7 +6,7 @@
 - 우분투 내에 `APM` (Apache, Php, Mysql) `컴파일 설치`
 
 ## Week 2.
-- Local(Window/MacOS) 서버 구축 : `Bitnami` 설치 및 외부접속
+- Local(Window/MacOS) 서버 구축 : `Bitnami` 설치 및 `포트포워딩` 설정 후 외부접속
 - `AWS` 서버 (EC2) 구축 : `Linux(Ubuntu 18.04) + Nginx, Php, MySQL` 설치 및 외부접속
 - Domain 적용해서 접속해보기
 - HTTPS 적용하기
