@@ -126,12 +126,16 @@ Nginx에는 그런 것이 없으므로, Nginx와 php를 연동시켜주는 `php-
 php가 제대로 설치되었는지 확인하기 위해서 아래와 같은 절차를 진행합니다.   
 먼저 nginx의 root로 들어가줍니다. root의 주소는 `/var/www/html`입니다.
 
+```
   $ cd /var/www/html
+```
 
 vi 편집기를 이용해 `index.php`라는 파일을 만들어주고, 아래와 같이 내용을 입력합니다.
 
+```
   $ sudo vi index.php
-  
+```
+
 ```
 <?php
 phpinfo();
@@ -154,8 +158,10 @@ vi 편집기를 이용해 기본 nginx 설정 파일로 들어갑니다. `/etc/n
 
 `:wq`로 저장하고 나온 뒤에 nginx를 재시작 해줍니다.
 
+```
   $ sudo service nginx restart
-  
+```
+
 이제 마지막으로 웹 브라우저에서 인스턴스의 `퍼블릭 IP 주소/index.php`로 접속해서 아래와 같이 php와 연동이 되는 것을 확인합니다.
 
 ![image](https://user-images.githubusercontent.com/43658658/131363925-8a35fbf2-64cf-49d3-8fa2-1a61c0a1a1fa.png)
