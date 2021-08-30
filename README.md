@@ -1,13 +1,13 @@
 # ★★ Server Tutorial ★★
 
 ## Week 1.
-- Virtual Box 다운로드
-- Virtual Box 내에 가상 환경 생성 및 우분투 다운로드
-- 우분투 내에 APM (Apache, Php, Mysql) 컴파일 설치
+- `Virtual Box` 다운로드
+- Virtual Box 내에 `가상 환경 생성` 및 `우분투 다운로드`
+- 우분투 내에 `APM` (Apache, Php, Mysql) `컴파일 설치`
 
 ## Week 2.
-- Bitnami 설치 및 외부접속
-- AWS 서버 (Ec2) 구축
+- Local(Window/MacOS) 서버 구축 : `Bitnami` 설치 및 외부접속
+- `AWS` 서버 (EC2) 구축 : `Linux(Ubuntu 18.04) + Nginx, Php, MySQL` 설치 및 외부접속
 - Domain 적용해서 접속해보기
 - HTTPS 적용하기
 - SubDomain적용
