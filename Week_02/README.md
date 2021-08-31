@@ -215,3 +215,31 @@ mysql> revoke all privileges on 데이터베이스이름.* from '사용자이름
 아래와 같이 `Test Connection`을 클릭하고 `Succeeded`가 뜨면 MySQL로 접속이 가능하다는 것을 의미합니다.
 
 ![image](https://user-images.githubusercontent.com/43658658/131488844-13dc5641-6d64-49a0-9e33-518c8e268cfa.png)
+
+> <h3>phpMyAdmin 설치하기</h3>
+
+phpMyAdmin : 웹 기반 인터페이스를 통해 MySQL 및 MariaDB 서버를 관리하기 위한 오픈소스 php 기반 도구입니다. MySQL와 상호 작용하면서 사용자 계정 및 권한을 관리하고, SQL문을 실행하고, 다양한 데이터 형식으로 데이터를 가져오고 내보낼 수 있습니다.
+
+- [Ubuntu 18.04 phpMyAdmin 설치 가이드 메뉴얼](https://ko.linux-console.net/?p=277)
+
+phpMyAdmin를 설치하기 전에 시스템에 Nginx 및 php-fpm이 설치되어 있어야합니다.   
+
+```
+$ sudo ln -s  /usr/share/phpmyadmin /var/www/html/phpmyadmin
+```
+
+위의 명령어를 통해 `심볼릭 링크`를 생성한 이후에는 `/etc/nginx/sites-available/default` 경로로 들어갑니다.
+
+```
+$ sudo vi /etc/nginx/sites-available/default
+```
+
+vi 편집기의 내용 중 아래의 내용이 적힌 곳을 찾아서 `index.php`를 추가해서 적어줍니다.
+
+![image](https://user-images.githubusercontent.com/43658658/131524215-a5e02039-0c87-4ad8-8b19-4b6e05565ec1.png)
+
+모든 설정이 끝났으면 `Nginx를 재시작`한 후, 웹 브라우저에서 인스턴스의 `퍼블릭IP/phpmyadmin`의 URL로 접속합니다.
+
+이전에 생성한 `MySQL의 외부 접속 허용 사용자 ID와 비밀번호`를 입력해 phpMyAdmin에 접속할 수 있습니다.
+
+![image](https://user-images.githubusercontent.com/43658658/131524798-c90ece23-394e-4624-8339-f57c8a93522d.png)
