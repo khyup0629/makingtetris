@@ -166,4 +166,7 @@ vi 편집기를 이용해 기본 nginx 설정 파일로 들어갑니다. `/etc/n
 
 ![image](https://user-images.githubusercontent.com/43658658/131363925-8a35fbf2-64cf-49d3-8fa2-1a61c0a1a1fa.png)
 
+> <h3>MySQL 외부에서 접속하기</h3>
+
+- [Datagrip 다운로드 사이트](https://www.jetbrains.com/datagrip/)
 
