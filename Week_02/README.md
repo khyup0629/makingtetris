@@ -115,7 +115,7 @@ Nginx는 Apache와 같은 역할의 웹 서버 프로그램입니다.
 
 MySQL을 설치한 뒤에 `sudo mysql`을 통해 MySQL로 접속이 되는지 확인할 수 있습니다.   
 (`exit`를 통해 다시 MySQL 밖으로 나올 수 있습니다)
-MySQL의 보안 설정을 해주어야 합니다. 역시 가이드 메뉴얼에 나와있으니 따라해보시기 바랍니다.
+MySQL의 `보안 설정`을 해주어야 합니다. 역시 가이드 메뉴얼에 나와있으니 따라해보시기 바랍니다.
 
 Nginx에서는 반드시 `php-fpm`을 설치해주어야합니다.   
 Apache에는 php와 자동으로 연동되도록 해주는 프로그램이 같이 설치되지만,   
@@ -170,3 +170,48 @@ vi 편집기를 이용해 기본 nginx 설정 파일로 들어갑니다. `/etc/n
 
 - [Datagrip 다운로드 사이트](https://www.jetbrains.com/datagrip/)
 
+- [외부에서 MySQL에 접속하기 가이드 메뉴얼](https://luminitworld.tistory.com/82)
+
+`Datagrip`을 통해 MySQL을 외부에서 접속할 수 있습니다.
+
+```
+ERROR 1819 (HY000): Your password does not satisfy the current policy requirements
+```
+
+위의 에러코드는 패스워드 규칙에 어긋나는 패스워드를 사용했을 때 나타납니다.   
+- [패스워드 정책 변경](https://kamang-it.tistory.com/entry/MySQL%ED%8C%A8%EC%8A%A4%EC%9B%8C%EB%93%9C-%EC%A0%95%EC%B1%85-%ED%99%95%EC%9D%B8-%EB%B3%80%EA%B2%BD%ED%95%98%EA%B8%B0)
+
+```
+mysql > SHOW VARIABLES LIKE 'validate_password%'
+```
+
+위의 명령문을 통해 보여지는 패스워드 정책(password policy)은 아래와 같습니다.
+
+![image](https://user-images.githubusercontent.com/43658658/131485489-6fc9d5f9-97b2-4613-abfb-f07fd40af6cd.png)
+
+- validate_password_check_user_name   : 패스워드에 `user id`가 들어갔는지를 묻습니다. 만약 아이디와 패스워드가 모두 root인데 만약 on이 켜져있다면 이는 불가능합니다.
+- validate_password_length            : 패스워드의 `길이`를 의미합니다. 8자 이상이어야 한다는 이야기이다.
+- validate_password_mixed_case_count  : `대소문자`를 적어도 1회 이상 써야합니다.
+- validate_password_number_count      : `숫자`를 적어도 1회 이상 써야합니다.
+- validate_password_special_char_count: `특수문자`를 적어도 1회 이상 써야합니다.
+
+- [MySQL 사용자 생성 및 권한 부여](https://idmango.com/108)
+
+어떤 사용자에 대한 데이터베이스 권한을 삭제하고 싶으면 아래의 명령어를 입력합니다.
+
+```
+mysql> revoke all privileges on 데이터베이스이름.* from '사용자이름'@'%';
+```
+
+외부에서 MySQL에 접속하기 위한 절차는 아래와 같습니다.
+
+1. `Datagrip` 설치하기
+2. MySQL `사용자` 생성하기
+3. `데이터베이스` 생성하기
+4. 생성한 사용자가 데이터베이스에 접근하도록 `권한 허용`하기
+5. `mysqld.cnf` 파일 내용 편집 및 EC2 인스턴스 `인바운딩 규칙` `3306번 포트` 설정하기
+6. `Datagrip`을 통해 인스턴스의 퍼블릭 IP로 접속하기
+
+아래와 같이 `Test Connection`을 클릭하고 `Succeeded`가 뜨면 MySQL로 접속이 가능하다는 것을 의미합니다.
+
+![image](https://user-images.githubusercontent.com/43658658/131488844-13dc5641-6d64-49a0-9e33-518c8e268cfa.png)
