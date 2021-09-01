@@ -243,3 +243,15 @@ vi 편집기의 내용 중 아래의 내용이 적힌 곳을 찾아서 `index.ph
 이전에 생성한 `MySQL의 외부 접속 허용 사용자 ID와 비밀번호`를 입력해 phpMyAdmin에 접속할 수 있습니다.
 
 ![image](https://user-images.githubusercontent.com/43658658/131524798-c90ece23-394e-4624-8339-f57c8a93522d.png)
+
+> <h3>AWS EC2에 Domain 적용</h3>
+
+- [Gabia(가비아)](https://domain.gabia.com/?gclid=Cj0KCQjwpreJBhDvARIsAF1_BU0zc8GdGcPBFSMdsJJmTp_xVkg8lsDgIRhyoEEKa94nroz5NHYpAuQaAhKWEALw_wcB)에서 원하는 이름으로 도메인을 구매합니다.
+
+가비아에서 `도메인을 구입`하여 ip주소 대신에 `도메인을 이용`하여 AWS EC2 퍼블릭 IPv4 주소에 보다 `쉽게 접근`할 수 있도록 할 수 있습니다.
+
+- [EC2에 Domain 적용하기 가이드 메뉴얼](https://yusang.tistory.com/32)
+
+AWS EC2 인스턴스에 도메인이 적용되면 `도메인 주소/index.php`로 접속했을 때 아래와 같은 페이지가 띄워집니다.
+
+![image](https://user-images.githubusercontent.com/43658658/131627805-38bf3c25-7ea6-405f-8a0f-b367f0144f60.png)
