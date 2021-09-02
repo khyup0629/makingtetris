@@ -4,15 +4,15 @@
 - 외부에서 접속하기 : phpinfo 띄우기 - Apache와 잘 연동되는지 체크 (by 포트포워딩)
 
 2. AWS 서버 구축 : Linux + Nginx, Php, MySQL
-- 외부에서 접속하기 : phpinfo 띄우기 - Apache와 잘 연동되는지 체크
-- MySQL 외부에서 접속하기 (DataGrip or Workbench)
+- 외부에서 접속하기 : phpinfo 띄우기 - Nginx와 잘 연동되는지 체크
+- MySQL 외부에서 접속하기 (By DataGrip)
 - phpMyAdmin 설치
-- Domain 적용 (가비아, 후이즈 ... 구입)
-- HTTPS 적용 (let's encrypt)
+- Domain 적용 (가비아에서 도메인 구입)
+- HTTPS 적용 (let's encrypt-certbot을 이용해 SSL 인증서 받고, 도메인에 적용하기)
 
 3. 챌린지
-- Sub Domain 적용 (Dev, Prod)
-- Redirection 적용 (IP to Domain) - 네이버 예시
+- Sub Domain 적용 (test.example.com, product.example.com)
+- Redirection 적용 (IP to Domain)
 
 ## Local 서버 구축
 
