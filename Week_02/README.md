@@ -289,7 +289,7 @@ AWS EC2 인스턴스에 올바르게 도메인이 적용되면 `도메인 주소
 
 > <h3>서브 도메인 생성 및 적용</h3>
 
-- [서브 도메인 생성 및 적용 가이드 메뉴얼](https://mr-shopper.tistory.com/entry/%EC%84%9C%EB%B8%8C%ED%95%98%EC%9C%84-%EB%8F%84%EB%A9%94%EC%9D%B8-%EB%A7%8C%EB%93%9C%EB%8A%94-%EB%B0%A9%EB%B2%95-%EA%B0%80%EB%B9%84%EC%95%84-CNAME-%EB%A0%88%EC%BD%94%EB%93%9C-%EC%B6%94%EA%B0%80-%EC%84%A4%EC%A0%95)
+- [서브 도메인 생성 및 적용 가이드 메뉴얼](https://luminitworld.tistory.com/86)
  
 홈페이지가 바껴서 서브 도메인 생성과 관련된 앞부분이 메뉴얼과 좀 다릅니다.   
 `[My 가비아]->[DNS 관리툴]`로 접속해서 도메인 리스트 중 서브 도메인을 만들고자 하는 도메인의 `설정`을 누르시고 `레코드 설정`을 통해 CNAME을 입력하시면 됩니다.   
@@ -307,3 +307,14 @@ CNAME을 입력할 때는 `값/위치`의 마지막에 .(점)을 붙여주지만
 ![image](https://user-images.githubusercontent.com/43658658/131841815-e2e83e7f-cda9-43a8-9a9e-8c9e6c84f4ab.png)
 
 ![image](https://user-images.githubusercontent.com/43658658/131841738-601bd09f-bc67-4a18-b04d-120a7516d308.png)
+
+> <h3>Redirection 적용하기</h3>
+
+- [IP to Domain Redirection 적용하기 가이드 메뉴얼](https://luminitworld.tistory.com/86)
+
+IP 주소를 입력했을 때 자동으로 도메인 주소로 보내주는 것을 Redirection이라고 합니다.   
+`/etc/nginx/sites-available` 경로의 `default`에 `Redirection`과 관련된 아래의 내용을 추가해주시면 됩니다.
+
+![image](https://user-images.githubusercontent.com/43658658/131843263-5e64526c-5556-47f6-9b23-eca57eeb6ac3.png)
+
+이렇게 하면 IP 주소(3.35.141.144)를 웹 브라우저의 주소창에 입력했을 때 자동으로 지정한 `도메인 주소`로 Redirection 시켜줍니다.
