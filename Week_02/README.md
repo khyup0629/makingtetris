@@ -269,10 +269,16 @@ AWS EC2 인스턴스에 올바르게 도메인이 적용되면 `도메인 주소
 
 반드시 `HTTPS`로 접근하기 위한 `443번 포트`를 인바운딩 규칙을 통해 열어주어야 합니다.
 
-SSL 인증서를 발급 받는 과정까지 마무리했으면 [테스트 사이트](https://www.ssllabs.com/ssltest/)에서 SSL 서버에 대한 테스트를 해볼 수 있습니다.   
+`SSL 인증서`를 발급 받는 과정까지 마무리했으면 [테스트 사이트](https://www.ssllabs.com/ssltest/)에서 SSL 서버에 대한 테스트를 해볼 수 있습니다.   
+(SSL 인증서를 발급 받기까지 `시간이 소요`될 수 있습니다)   
 아래와 같은 화면이 뜬다면 성공적으로 인증이 완료된 것입니다.
 
 ![image](https://user-images.githubusercontent.com/43658658/131798478-20ba7684-6eca-4357-a179-6d147c06be09.png)
+
+모든 과정이 끝나면, 웹 브라우저에 `도메인 이름`을 입력하면 `자동으로 HTTPS로 연결`되며 php와 연동된 화면이 띄워집니다.   
+(HTTPS로 연결되면 URL 옆에 `자물쇠 모양`이 나타납니다)
+
+![image](https://user-images.githubusercontent.com/43658658/131826677-fa46abe6-5194-44b7-b9b1-1fb36beb619e.png)
 
 서버 블럭(example.com) 생성해서 HTTPS 적용하기 참고 사이트들
 
@@ -280,5 +286,3 @@ SSL 인증서를 발급 받는 과정까지 마무리했으면 [테스트 사이
 - [서버 블럭(example.com) 설정하기](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-18-04#step-5-setting-up-server-blocks-(recommended)) : HTTPS를 적용하기 위해선 거쳐야하는 과정입니다. `도메인을 만들 때마다` 반드시 진행되어야 하는 과정입니다.사이트의 5번 섹션을 참고하시면 됩니다. `example.com=도메인이름`을 의미합니다!
 
 서버 블럭을 생성할 때, `index.html` 파일을 만드는 작업을 꼭 수행하지 않아도 됩니다.   
-
-
