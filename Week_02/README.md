@@ -260,19 +260,25 @@ AWS EC2 인스턴스에 올바르게 도메인이 적용되면 `도메인 주소
 > <h3>HTTPS 적용하기</h3>
 
 - [Let's Encrypt, certbot에 관한 개념](https://jootc.com/p/201901062488)
-- [Let's Encrypt를 이용해 인스턴스에 HTTPS 적용하기 가이드 메뉴얼](https://velog.io/@pinot/Ubuntu-18.04%EC%97%90%EC%84%9C-Lets-Encrypt%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EC%97%AC-Nginx%EC%97%90-SSL%EC%9D%84-%EC%A0%81%EC%9A%A9%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95)
-- [서버 블럭(example.com) 설정하기](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-18-04#step-5-setting-up-server-blocks-(recommended)) : HTTPS를 적용하기 위해선 거쳐야하는 과정입니다. `도메인을 만들 때마다` 반드시 진행되어야 하는 과정입니다.사이트의 5번 섹션을 참고하시면 됩니다. `example.com=도메인이름`을 의미합니다!
+- [Let's Encrypt를 이용해 인스턴스에 HTTPS 적용하기 가이드 메뉴얼](https://yusang.tistory.com/33?category=835611)
 - [ln 명령어와 하드/소프트(심볼릭) 링크](https://jhnyang.tistory.com/269)
-
-서버 블럭을 생성할 때, `index.html` 파일을 만드는 작업을 꼭 수행하지 않아도 됩니다.   
-- [여러 에러가 발생할 때 참고했던 사이트](https://www.sunny-son.space/AWS/HTTPS%20%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0/)
 
 ![image](https://user-images.githubusercontent.com/43658658/131777923-b1265275-b51d-48a8-85ce-cfcc9cf49edc.png)
 
 위와 같은 에러가 발생한다면, 인스턴스의 인바운드 규칙에서 `80번 포트`의 허용 IP주소를 `0.0.0.0/0`으로 설정해서 모든 IP가 접속가능하도록 하면 해결할 수 있습니다.
 
+반드시 `HTTPS`로 접근하기 위한 `443번 포트`를 인바운딩 규칙을 통해 열어주어야 합니다.
+
 SSL 인증서를 발급 받는 과정까지 마무리했으면 [테스트 사이트](https://www.ssllabs.com/ssltest/)에서 SSL 서버에 대한 테스트를 해볼 수 있습니다.   
 아래와 같은 화면이 뜬다면 성공적으로 인증이 완료된 것입니다.
 
 ![image](https://user-images.githubusercontent.com/43658658/131798478-20ba7684-6eca-4357-a179-6d147c06be09.png)
+
+서버 블럭(example.com) 생성해서 HTTPS 적용하기 참고 사이트들
+
+- [Let's Encrypt를 이용해 인스턴스에 HTTPS 적용하기 가이드 메뉴얼](https://velog.io/@pinot/Ubuntu-18.04%EC%97%90%EC%84%9C-Lets-Encrypt%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EC%97%AC-Nginx%EC%97%90-SSL%EC%9D%84-%EC%A0%81%EC%9A%A9%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95)
+- [서버 블럭(example.com) 설정하기](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-18-04#step-5-setting-up-server-blocks-(recommended)) : HTTPS를 적용하기 위해선 거쳐야하는 과정입니다. `도메인을 만들 때마다` 반드시 진행되어야 하는 과정입니다.사이트의 5번 섹션을 참고하시면 됩니다. `example.com=도메인이름`을 의미합니다!
+
+서버 블럭을 생성할 때, `index.html` 파일을 만드는 작업을 꼭 수행하지 않아도 됩니다.   
+
 
