@@ -4,14 +4,22 @@
 
 ![image](https://user-images.githubusercontent.com/43658658/132510879-06e0f7e9-c373-4580-9941-f3c2b9f5d135.png)
 
-테이블은 크게 4개로 생각해 볼 수 있습니다.
+테이블은 크게 5개로 생각해 볼 수 있습니다.
 
 1. User : 인스타의 유저에 관한 정보가 담기는 테이블입니다.
 2. Feed : 피드에 들어갈 컨텐츠 정보가 담기는 테이블입니다.
 3. clickLike : '좋아요'를 누른 회원의 정보가 담기는 테이블입니다.
 4. Reply : 댓글과 관련한 정보가 담기는 테이블입니다.
+5. Rereply : 대댓글과 관련한 정보가 담기는 테이블입니다.
 
-타임라인에 있는 많은 피드들 중 하나의 피드를 클릭했을 때 그 피드에 대한 정보를 출력하는 SQL문을 작성하겠습니다.
+![image](https://user-images.githubusercontent.com/43658658/132552339-2b59f9fb-8550-49b8-b9b1-9f20b64563e3.png)
+
+## Datagrip에 데이터 작성
+
+## 한방 쿼리 작성
+
+타임라인에 있는 많은 피드들 중 하나의 피드를 클릭했을 때 그 피드에 대한 정보를 출력하는 SQL문을 작성하겠습니다.   
+(Tip : 작은 문제로 쪼개서 생각하고, 점진적으로 `한방 쿼리`로 합쳐나가면 차근차근 해나갈 수 있습니다)
 
 ``` mysql
 -- 피드 유저, 피드 이미지, 피드 내용, 피드 올린 시각
@@ -59,4 +67,50 @@ where Feed.userID='bllumusic';
 ```
 
 ![image](https://user-images.githubusercontent.com/43658658/132538723-d8b3c728-585c-4c43-934b-477dce5c218e.png)
+
+``` mysql
+-- 각 피드별로 좋아요를 가장 마지막에 한 사람
+select feedNo, userID, createdAt
+from clickLike
+where (feedNo, createdAt) in (select feedNo, max(createdAt) from clickLike group by feedNo);
+```
+
+![image](https://user-images.githubusercontent.com/43658658/132549654-224eb4c6-de77-4e4f-bd63-63843ba9605f.png)
+
+``` mysql
+-- 마지막 좋아요 한 사람 + 좋아요 개수
+select clickLike.feedNo, concat(userID, '님 외 ', clickLikeCnt, '명이 좋아합니다.') as totalLikeUser
+from clickLike
+inner join (select feedNo, count(feedNo) as clickLikeCnt
+from clickLike group by feedNo) as clickLikeCntTable
+on clickLike.feedNo = clickLikeCntTable.feedNo
+where (clickLike.feedNo, createdAt) in (select feedNo, max(createdAt) from clickLike group by feedNo);
+```
+
+![image](https://user-images.githubusercontent.com/43658658/132551262-55570ff8-d0ef-47d2-a58f-6b2d4f16c0db.png)
+
+``` mysql
+-- 마지막 좋아요 한 사람 + 좋아요 개수가 추가된 버전
+select Feed.userID, imageUrl as feedImage, totalLikeUser, content,
+    case
+        when timestampdiff(second, Feed.createdAt, current_timestamp) <= 59
+        then '방금 전'
+        when timestampdiff(minute, Feed.createdAt, current_timestamp) <= 59
+        then concat(timestampdiff(minute, Feed.createdAt, current_timestamp),'분 전')
+        when timestampdiff(hour, Feed.createdAt, current_timestamp) <= 23
+        then concat(timestampdiff(hour, Feed.createdAt, current_timestamp), '시간 전')
+        else date_format(Feed.createdAt, '%m월 %d일')
+    end as createdAtFeed
+from Feed
+inner join (select clickLike.feedNo, concat(userID, '님 외 ', clickLikeCnt, '명이 좋아합니다.') as totalLikeUser
+from clickLike
+inner join (select feedNo, count(feedNo) as clickLikeCnt
+from clickLike group by feedNo) as clickLikeCntTable
+on clickLike.feedNo = clickLikeCntTable.feedNo
+where (clickLike.feedNo, createdAt) in (select feedNo, max(createdAt) from clickLike group by feedNo)) as clickLike
+on clickLike.feedNo = Feed.feedNo
+where Feed.userID='bllumusic';
+```
+
+![image](https://user-images.githubusercontent.com/43658658/132551816-abdd09a9-a5fa-4701-966f-36ac01840276.png)
 
