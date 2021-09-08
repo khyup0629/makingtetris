@@ -84,15 +84,15 @@ select * from Chat where userID='khyup0629';
 ![image](https://user-images.githubusercontent.com/43658658/132442050-21be1852-e023-4c02-9039-1c804dc58a6a.png)
 
 ``` mysql
-// Room 테이블의 데이터 중 roomNo가, khyup0629인 유저의 Member 테이블의 roomNo 데이터와 일치하는 데이터를 출력합니다.
+-- Room 테이블의 데이터 중 roomNo가, khyup0629인 유저의 Member 테이블의 roomNo 데이터와 일치하는 데이터를 출력합니다.
 select * from Room where roomNo in (select roomNo from Member where userID='khyup0629');
 ```
 
 ![image](https://user-images.githubusercontent.com/43658658/132442343-4c6cf77f-8034-43e1-8d6b-e3e2a74c0b48.png)
 
 ``` mysql
-// from 'A' inner join 'B' on 'Criteria` : 'A'와 'B'를 'Criteria'를 기준으로 합칩니다.
-// 중복되는 칼럼이 있을 경우 `테이블.칼럼`의 형식으로 적어줍니다.
+-- from 'A' inner join 'B' on 'Criteria` : 'A'와 'B'를 'Criteria'를 기준으로 합칩니다.
+-- 중복되는 칼럼이 있을 경우 `테이블.칼럼`의 형식으로 적어줍니다.
 select Room.roomNo, title, imageUrl, Room.createdAt 
 from Member inner join Room on Room.roomNo = Member.roomNo
 where userID = 'khyup0629';
@@ -101,7 +101,7 @@ where userID = 'khyup0629';
 ![image](https://user-images.githubusercontent.com/43658658/132444293-21797f5a-38d1-4942-a9a8-e8feb10ad6ee.png)
 
 ``` mysql
-// as를 이용해 칼럼의 출력되는 이름을 바꿀 수 있습니다.
+-- as를 이용해 칼럼의 출력되는 이름을 바꿀 수 있습니다.
 select Room.roomNo, title as roomName, imageUrl as roomImageUrl, Room.createdAt
 from Member inner join Room on Room.roomNo = Member.roomNo
 where userID = 'khyup0629';
@@ -110,14 +110,14 @@ where userID = 'khyup0629';
 ![image](https://user-images.githubusercontent.com/43658658/132444439-46d5b60c-5f9d-4f9e-943d-f14dd0a9600e.png)
 
 ``` mysql
-// Chat 테이블의 roomNo별로 `no가 가장 큰` roomNo, no를 출력합니다.
+-- Chat 테이블의 roomNo별로 `no가 가장 큰` roomNo, no를 출력합니다.
 select roomNo, max(no) as currentMessageNo from Chat group by roomNo;
 ```
 
 ![image](https://user-images.githubusercontent.com/43658658/132444709-3dd11a5a-2af6-4874-8f00-7cb6e7eb27b0.png)
 
 ``` mysql
-// inner join ( ~ ) 'A' : 괄호 내의 칼럼들을 'A'라는 테이블로 묶습니다.
+-- inner join ( ~ ) 'A' : 괄호 내의 칼럼들을 'A'라는 테이블로 묶습니다.
 select * 
 from Chat
 inner join (select roomNo, max(no) as currentMessageNo 
@@ -127,7 +127,7 @@ from Chat group by roomNo) currentMessage;
 ![image](https://user-images.githubusercontent.com/43658658/132447812-c98f9bb0-0902-4db7-a537-c105838833fa.png)
 
 ``` mysql
-// currentMessageNo와 no가 같은 데이터를 추려냅니다.
+-- currentMessageNo와 no가 같은 데이터를 추려냅니다.
 select Chat.roomNo, contents as lastMessage,
        type as lastMessageType, createdAt as lastMessageTimeStamp
 from Chat
@@ -154,12 +154,12 @@ where currentMessageNo = no;
 따라서, 앞서 작성한 두 가지의 SQL문을 합쳐서 `한방쿼리`로 작성해줍니다.   
 
 ``` mysql
-// khyup0629가 속해있는 톡방만 화면에 띄웁니다.
+-- khyup0629가 속해있는 톡방만 화면에 띄웁니다.
 select Room.roomNo, ImageUrl as roomImageUrl, title as roomName,
        lastMessage, lastMessageType, lastMessageTimeStamp
 from Member inner join Room on Room.roomNo = Member.roomNo
 where userID = 'khyup0629';
-// + 톡방 별로 가장 최근 데이터를 뽑아냅니다.
+-- + 톡방 별로 가장 최근 데이터를 뽑아냅니다.
 select Chat.roomNo, contents as lastMessage,
        type as lastMessageType, createdAt as lastMessageTimeStamp
 from Chat
@@ -169,7 +169,7 @@ where currentMessageNo = no;
 ```
 
 ``` mysql
-// 합쳐진 SQL문입니다.
+-- 합쳐진 SQL문입니다.
 select Room.roomNo, ImageUrl as roomImageUrl, title as roomName,
        lastMessage, lastMessageType, lastMessageTimeStamp
 from Member
