@@ -185,3 +185,37 @@ where userID = 'khyup0629';
 ```
 
 ![image](https://user-images.githubusercontent.com/43658658/132450456-51402c7c-bd45-49f3-8aad-fef20cdc13b6.png)
+
+마지막으로, 가장 마지막으로 보낸 메세지의 시간(`lastMessageTimeStamp`)을 살펴봅시다.   
+카카오톡의 시간 표시 기능은 현재 시간(current_timestamp)과 비교해 마지막으로 보낸 메세지의 시간(`lastMessageTimeStamp`)의   
+연도(year)가 다르면 `2020-09-08`의 형식으로 나타내고,
+월(month), 일(date)이 다르면 `m월 d일`로 나타내고, 같은 날인 경우 `오전/오후 hh:mm`으로 나타냅니다.   
+그래서 이중 `case when/then`문을 사용하여 이를 구현해봅시다.
+
+``` mysql
+select Room.roomNo, ImageUrl as roomImageUrl, title as roomName,
+    lastMessage, lastMessageType,
+        case
+            when year(lastMessageTimeStamp) != year(current_timestamp)
+            then date_format(lastMessageTimeStamp, '%Y-%m-%d')
+            when date_format(lastMessageTimeStamp, '%y%m%d') != date_format(current_timestamp, '%y%m%d')
+            then date_format(lastMessageTimeStamp, '%m월 %d일')
+            else case when date_format(lastMessageTimeStamp, '%p') = 'AM'
+                then date_format(lastMessageTimeStamp, '오전 %h:%m')
+                else date_format(lastMessageTimeStamp, '오후 %h:%m')
+                end
+        end as lastMessageTimeStamp
+from Member
+inner join Room
+on Room.roomNo = Member.roomNo
+inner join (select Chat.roomNo, contents as lastMessage,
+    type as lastMessageType, createdAt as lastMessageTimeStamp
+from Chat
+inner join (select roomNo, max(no) as currentMessageNo
+from Chat group by roomNo) currentMessage
+where currentMessageNo = no) lastChatMessage
+on lastChatMessage.roomNo = Member.roomNo
+where userID = 'khyup0629';
+```
+
+![image](https://user-images.githubusercontent.com/43658658/132496229-727c7e54-a40a-4a92-bfac-4c8f2dd77b2d.png)
