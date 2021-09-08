@@ -1,9 +1,10 @@
 # Week 3.
 
-- ERD 작성
+- `ERD` 설계 (with `AQueryTool`)
+- `Datagrip`에 테이블 및 데이터 작성
+- `Quary문` 실습 (in Datagrip)
 - AWS RDS (DB) 생성
-- Datagrip 에 테이블 작성
-- Quary문 실습
+- 시중에 있는 `어플 카피`해보기(Week 3~)
 
 ## ERD 작성
 
