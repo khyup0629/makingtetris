@@ -31,3 +31,32 @@ where userID='bllumusic';
 
 ![image](https://user-images.githubusercontent.com/43658658/132536182-76989683-53cf-418d-a12f-7c6181846dbc.png)
 
+``` mysql
+-- feed별 좋아요 개수
+select feedNo, count(feedNo) as clickLikeCnt
+from clickLike group by feedNo;
+```
+
+![image](https://user-images.githubusercontent.com/43658658/132538353-2d8e02ab-a397-40bb-9e93-b7f0957df4ab.png)
+
+``` mysql
+-- 좋아요 개수가 추가된 버전
+select Feed.userID, imageUrl as feedImage, clickLikeCnt, content,
+    case
+        when timestampdiff(second, Feed.createdAt, current_timestamp) <= 59
+        then '방금 전'
+        when timestampdiff(minute, Feed.createdAt, current_timestamp) <= 59
+        then concat(timestampdiff(minute, Feed.createdAt, current_timestamp),'분 전')
+        when timestampdiff(hour, Feed.createdAt, current_timestamp) <= 23
+        then concat(timestampdiff(hour, Feed.createdAt, current_timestamp), '시간 전')
+        else date_format(Feed.createdAt, '%m월 %d일')
+    end as createdAtFeed
+from Feed
+inner join (select feedNo, count(feedNo) as clickLikeCnt
+from clickLike group by feedNo) as clickLike
+on clickLike.feedNo = Feed.feedNo
+where Feed.userID='bllumusic';
+```
+
+![image](https://user-images.githubusercontent.com/43658658/132538723-d8b3c728-585c-4c43-934b-477dce5c218e.png)
+
