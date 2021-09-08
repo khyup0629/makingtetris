@@ -150,7 +150,7 @@ where currentMessageNo = no;
 ![image](https://user-images.githubusercontent.com/43658658/132444761-4fc9b120-cc78-4704-843f-eb7299943054.png)
 
 6개의 칼럼은 현재 '나'인 `khyup0629`가 속해있는 톡방만 화면에 띄워질 것입니다.   
-따라서, 앞서 작성한 두 가지의 SQL문을 합쳐줍니다.   
+따라서, 앞서 작성한 두 가지의 SQL문을 합쳐서 `한방쿼리`로 작성해줍니다.   
 
 ``` mysql
 // khyup0629가 속해있는 톡방만 화면에 띄웁니다.
@@ -190,7 +190,8 @@ where userID = 'khyup0629';
 카카오톡의 시간 표시 기능은 현재 시간(current_timestamp)과 비교해 마지막으로 보낸 메세지의 시간(`lastMessageTimeStamp`)의   
 연도(year)가 다르면 `2020-09-08`의 형식으로 나타내고,
 월(month), 일(date)이 다르면 `m월 d일`로 나타내고, 같은 날인 경우 `오전/오후 hh:mm`으로 나타냅니다.   
-그래서 이중 `case when/then`문을 사용하여 이를 구현해봅시다.
+그래서 이중 `case when/then`문을 사용하여 이를 구현해봅시다.   
+(구글링을 통해 키워드 `mysql 날짜 형식`, `mysql 연도 추출`, `mysql case when`로 검색해서 공부합니다)
 
 ``` mysql
 select Room.roomNo, ImageUrl as roomImageUrl, title as roomName,
