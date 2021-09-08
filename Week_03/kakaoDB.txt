@@ -1,0 +1,58 @@
+﻿-- 테이블 순서는 관계를 고려하여 한 번에 실행해도 에러가 발생하지 않게 정렬되었습니다.
+
+-- Friend Table Create SQL
+CREATE TABLE Friend
+(
+    `userID`    VARCHAR(45)    NOT NULL, 
+    `friendID`  VARCHAR(45)    NOT NULL, 
+     PRIMARY KEY (userID, friendID)
+);
+
+
+-- Chat Table Create SQL
+CREATE TABLE Chat
+(
+    `no`         INT            NOT NULL    AUTO_INCREMENT, 
+    `roomNo`     VARCHAR(45)    NULL, 
+    `userID`     VARCHAR(45)    NULL, 
+    `type`       VARCHAR(45)    NULL        DEFAULT 'TEXT', 
+    `createdAt`  TIMESTAMP      NULL        DEFAULT CURRENT_TIMESTAMP, 
+     PRIMARY KEY (no)
+);
+
+
+-- Room Table Create SQL
+CREATE TABLE Room
+(
+    `no`         INT            NOT NULL    AUTO_INCREMENT, 
+    `title`      VARCHAR(45)    NOT NULL, 
+    `createdAt`  TIMESTAMP      NOT NULL    DEFAULT CURRENT_TIMESTAMP, 
+     PRIMARY KEY (no)
+);
+
+
+-- Member Table Create SQL
+CREATE TABLE Member
+(
+    `roomNo`     INT            NOT NULL, 
+    `userID`     VARCHAR(45)    NOT NULL, 
+    `createdAt`  VARCHAR(45)    NOT NULL    DEFAULT 'CURRENT_TIMESTAMP', 
+     PRIMARY KEY (roomNo, userID)
+);
+
+
+-- User Table Create SQL
+CREATE TABLE User
+(
+    `no`                  INT            NOT NULL    AUTO_INCREMENT, 
+    `profileImageUrl`     TEXT           NULL, 
+    `backgroundImageUrl`  TEXT           NULL, 
+    `name`                VARCHAR(45)    NOT NULL, 
+    `userId`              VARCHAR(45)    NOT NULL, 
+    `isDeleted`           CHAR(1)        NOT NULL    DEFAULT 'N' COMMENT 'N : 활성 Y : 탈퇴', 
+    `createdAt`           TIMESTAMP      NOT NULL    DEFAULT CURRENT_TIMESTAMP, 
+    `updatedAt`           TIMESTAMP      NULL        DEFAULT current_timestamp on update current_timestamp, 
+     PRIMARY KEY (no)
+);
+
+
