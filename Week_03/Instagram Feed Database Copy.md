@@ -16,6 +16,24 @@
 
 ## Datagrip에 데이터 작성
 
+한글 입/출력을 위해서 테이블을 콘솔로 옮겨서 실행하기 전에 반드시 끝에 `default charset=utf8`을 추가해 주어야합니다.   
+![image](https://user-images.githubusercontent.com/43658658/132625663-b7cd574c-c3b2-4526-a7a4-5142a869cca5.png)
+
+1. User   
+![image](https://user-images.githubusercontent.com/43658658/132625372-95713037-80a7-4d40-bf5d-33bad646523b.png)
+
+2. Feed   
+![image](https://user-images.githubusercontent.com/43658658/132625417-751acd8c-0494-47b1-a152-ce87710dad78.png)
+
+3. clickLike   
+![image](https://user-images.githubusercontent.com/43658658/132625456-5b90e2de-5486-43f8-b12d-be13d40bf093.png)
+
+4. Reply   
+![image](https://user-images.githubusercontent.com/43658658/132625477-10623c75-cf17-4629-9935-b0d7493a5883.png)
+
+5. Rereply   
+![image](https://user-images.githubusercontent.com/43658658/132625502-14ee11e8-c688-4abe-93a0-ab3da25520e9.png)
+
 ## 한방 쿼리 작성
 
 타임라인에 있는 많은 피드들 중 하나의 피드를 클릭했을 때 그 피드에 대한 정보를 출력하는 SQL문을 작성하겠습니다.   
