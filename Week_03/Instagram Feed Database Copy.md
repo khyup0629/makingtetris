@@ -114,3 +114,68 @@ where Feed.userID='bllumusic';
 
 ![image](https://user-images.githubusercontent.com/43658658/132551816-abdd09a9-a5fa-4701-966f-36ac01840276.png)
 
+``` mysql
+-- 피드별 댓글 개수
+select Reply.feedNo, concat('댓글 ', count(Reply.feedNo), '개 모두 보기') as ReplyCnt
+from Reply group by Reply.feedNo;
+```
+
+![image](https://user-images.githubusercontent.com/43658658/132625087-75424698-bafb-4dee-abf4-3cc030b2d005.png)
+
+``` mysql
+-- 가장 최근 댓글
+select Reply.replyNo, Reply.feedNo, Reply.userID as lastReplyUser, Reply.reply as lastReply,
+       Reply.isHeart as replyIsHeart
+from Reply
+where (feedNo, createdAt) in (select feedNo, max(createdAt) from Reply group by feedNo);
+```
+
+![image](https://user-images.githubusercontent.com/43658658/132625121-f2241acb-b01a-40d5-b2a0-17582eb5e71f.png)
+
+``` mysql
+-- 댓글별 가장 최근 대댓글
+select Rereply.replyNo, Rereply.feedNo, Rereply.userID, Rereply.reply
+from Rereply
+where (replyNo, no) in (select replyNo, max(no) from Rereply group by replyNo);
+```
+
+![image](https://user-images.githubusercontent.com/43658658/132625182-8f706484-f278-4c10-9af3-2417b51e4448.png)
+
+``` mysql
+-- 피드별 댓글 개수 + 가장 최근 댓글 + 대댓글이 추가된 버전
+select Feed.userID, imageUrl as Image, totalLikeUser, content, ReplyCnt, lastReplyUser, lastReply, replyIsHeart,
+       lastRereplyUser, lastRereply, rereplyIsHeart,
+    case
+        when timestampdiff(second, Feed.createdAt, current_timestamp) <= 59
+        then '방금 전'
+        when timestampdiff(minute, Feed.createdAt, current_timestamp) <= 59
+        then concat(timestampdiff(minute, Feed.createdAt, current_timestamp),'분 전')
+        when timestampdiff(hour, Feed.createdAt, current_timestamp) <= 23
+        then concat(timestampdiff(hour, Feed.createdAt, current_timestamp), '시간 전')
+        else date_format(Feed.createdAt, '%m월 %d일')
+    end as createdAtFeed
+from Feed
+inner join (select clickLike.feedNo, concat(userID, '님 외 ', clickLikeCnt, '명이 좋아합니다.') as totalLikeUser
+from clickLike
+inner join (select feedNo, count(feedNo) as clickLikeCnt
+from clickLike group by feedNo) as clickLikeCntTable
+on clickLike.feedNo = clickLikeCntTable.feedNo
+where (clickLike.feedNo, createdAt) in (select feedNo, max(createdAt) from clickLike group by feedNo)) as clickLike
+on clickLike.feedNo = Feed.feedNo
+inner join (select Reply.feedNo, concat('댓글 ', count(Reply.feedNo), '개 모두 보기') as ReplyCnt
+from Reply group by Reply.feedNo) as totalReply
+on totalReply.feedNo = Feed.feedNo
+inner join (select Reply.replyNo, Reply.feedNo, Reply.userID as lastReplyUser, Reply.reply as lastReply,
+       Reply.isHeart as replyIsHeart
+from Reply
+where (feedNo, createdAt) in (select feedNo, max(createdAt) from Reply group by feedNo)) as lastReplyTable
+on lastReplyTable.feedNo = Feed.feedNo
+inner join (select Rereply.replyNo, Rereply.feedNo, Rereply.userID as lastRereplyUser, Rereply.reply as lastRereply,
+        Rereply.isHeart as rereplyIsHeart
+from Rereply
+where (replyNo, no) in (select replyNo, max(no) from Rereply group by replyNo)) as lastRereplyTable
+on lastRereplyTable.feedNo = Feed.feedNo
+where Feed.userID='bllumusic';
+```
+
+![image](https://user-images.githubusercontent.com/43658658/132625262-c8e77333-baed-459f-8587-ccc669c8b6a6.png)
