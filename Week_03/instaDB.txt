@@ -1,0 +1,64 @@
+﻿-- 테이블 순서는 관계를 고려하여 한 번에 실행해도 에러가 발생하지 않게 정렬되었습니다.
+
+-- Rereply Table Create SQL
+CREATE TABLE Rereply
+(
+    `replyNo`    INT            NOT NULL    AUTO_INCREMENT, 
+    `userID`     VARCHAR(45)    NULL, 
+    `reply`      TEXT           NULL, 
+    `isHeart`    CHAR(1)        NULL        DEFAULT 'N' COMMENT 'N:하트없음, Y:하트있음', 
+    `createdAt`  TIMESTAMP      NULL        DEFAULT CURRENT_TIMESTAMP, 
+     PRIMARY KEY (replyNo)
+);
+
+
+-- Reply Table Create SQL
+CREATE TABLE Reply
+(
+    `replyNo`    INT            NOT NULL, 
+    `feedNo`     INT            NOT NULL, 
+    `userID`     VARCHAR(45)    NOT NULL, 
+    `reply`      VARCHAR(45)    NOT NULL, 
+    `isHeart`    CHAR(1)        NULL        DEFAULT 'N' COMMENT 'N:하트없음, Y:하트있음', 
+    `createdAt`  TIMESTAMP      NOT NULL    DEFAULT CURRENT_TIMESTAMP, 
+     PRIMARY KEY (replyNo)
+);
+
+
+-- clickLike Table Create SQL
+CREATE TABLE clickLike
+(
+    `feedNo`     INT            NOT NULL    AUTO_INCREMENT, 
+    `userID`     VARCHAR(45)    NOT NULL, 
+    `createdAt`  TIMESTAMP      NOT NULL    DEFAULT CURRENT_TIMESTAMP, 
+     PRIMARY KEY (feedNo)
+);
+
+
+-- Feed Table Create SQL
+CREATE TABLE Feed
+(
+    `feedNo`     INT            NOT NULL    AUTO_INCREMENT, 
+    `userID`     VARCHAR(45)    NOT NULL, 
+    `imageUrl`   TEXT           NOT NULL, 
+    `content`    TEXT           NULL, 
+    `createdAt`  TIMESTAMP      NOT NULL    DEFAULT CURRENT_TIMESTAMP, 
+     PRIMARY KEY (feedNo)
+);
+
+
+-- User Table Create SQL
+CREATE TABLE User
+(
+    `no`               INT            NOT NULL    AUTO_INCREMENT, 
+    `profileImageUrl`  TEXT           NULL, 
+    `name`             VARCHAR(45)    NOT NULL, 
+    `userID`           VARCHAR(45)    NOT NULL, 
+    `introduction`     TEXT           NULL, 
+    `isDeleted`        CHAR(1)        NOT NULL    DEFAULT 'N' COMMENT 'N : 활성 Y : 탈퇴', 
+    `createdAt`        TIMESTAMP      NOT NULL    DEFAULT CURRENT_TIMESTAMP, 
+    `updatedAt`        TIMESTAMP      NULL        DEFAULT current_timestamp on update current_timestamp, 
+     PRIMARY KEY (no)
+);
+
+
