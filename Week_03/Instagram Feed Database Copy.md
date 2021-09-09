@@ -39,6 +39,9 @@
 타임라인에 있는 많은 피드들 중 하나의 피드를 클릭했을 때 그 피드에 대한 정보를 출력하는 SQL문을 작성하겠습니다.   
 (Tip : 작은 문제로 쪼개서 생각하고, 점진적으로 `한방 쿼리`로 합쳐나가면 차근차근 해나갈 수 있습니다)
 
+- 꼭 나와야 하는 칼럼   
+UserID, imageUrl, totalLikeUser(lastLikeUser, clickLikeCnt), content, ReplyCnt, LastReply(user, content, isheart), LastRereply(user, content, isheart), createdAtFeed
+
 ``` mysql
 -- 피드 유저, 피드 이미지, 피드 내용, 피드 올린 시각
 select userID, imageUrl as feedImage, content,
