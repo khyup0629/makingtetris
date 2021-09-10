@@ -7,13 +7,19 @@
 ``` mysql
 -- 스토리 리스트 : 내(bllumusic) 스토리 표시(스토리는 24시간 이내 올린 스토리만 노출)
 select profileImageurl as storyProfileImage,
-       if(exists(select * from StoryTable where timestampdiff(day, storyCreatedAt, current_timestamp) < 1
-                    and storyUserID = 'bllumusic' order by storyNo DESC)
-        and
-          (select storyNo from StoryTable where timestampdiff(day, storyCreatedAt, current_timestamp) < 1
-            and storyUserID = 'bllumusic' order by storyNo DESC)
-            in (select storyWatchingStoryNo from StoryWatchingTable where storyWatchingUserID = 'bllumusic'),
-           'Y', 'N') as storyIsWatchingMyself
+       if(exists(select *
+                 from StoryTable
+                 where timestampdiff(day, storyCreatedAt, current_timestamp) < 1
+                   and storyUserID = 'bllumusic'
+                 order by storyNo DESC)
+              and
+          (select storyNo
+           from StoryTable
+           where timestampdiff(day, storyCreatedAt, current_timestamp) < 1
+             and storyUserID = 'bllumusic'
+           order by storyNo DESC)
+              in (select storyWatchingStoryNo from StoryWatchingTable where storyWatchingUserID = 'bllumusic'),
+          'Y', 'N')    as storyIsWatchingMyself
 from ProfileTable
 where profileUserID = 'bllumusic';
 ```
@@ -22,18 +28,22 @@ where profileUserID = 'bllumusic';
 
 ``` mysql
 -- 스토리 리스트 : 내(bllumusic)가 팔로우한 유저들 스토리 표시 (스토리는 24시간 이내 올린 스토리만 노출)
-select storyNo, profileImageUrl as storyFollowProfileImage, profileUserID as storyFollowUserID,
-       if (storyNo in (select storyWatchingStoryNo
-                        from StoryWatchingTable
-                        where storyWatchingUserID = 'bllumusic'), 'Y', 'N') as storyIsWatching
-from (select max(storyNo) as storyNo, storyUserID from StoryTable
-    where timestampdiff(day, storyCreatedAt, current_timestamp) < 1 group by storyUserID) as StoryWithinDayTable
-inner join (select *
-from FollowerTable
-where followerUserID = 'bllumusic') as followerBllumusic
-on followerBllumusic.followerHost = StoryWithinDayTable.storyUserID
-inner join ProfileTable
-on ProfileTable.profileUserID = StoryWithinDayTable.storyUserID
+select storyNo,
+       profileImageUrl                                                    as storyFollowProfileImage,
+       profileUserID                                                      as storyFollowUserID,
+       if(storyNo in (select storyWatchingStoryNo
+                      from StoryWatchingTable
+                      where storyWatchingUserID = 'bllumusic'), 'Y', 'N') as storyIsWatching
+from (select max(storyNo) as storyNo, storyUserID
+      from StoryTable
+      where timestampdiff(day, storyCreatedAt, current_timestamp) < 1
+      group by storyUserID) as StoryWithinDayTable
+         inner join (select *
+                     from FollowerTable
+                     where followerUserID = 'bllumusic') as followerBllumusic
+                    on followerBllumusic.followerHost = StoryWithinDayTable.storyUserID
+         inner join ProfileTable
+                    on ProfileTable.profileUserID = StoryWithinDayTable.storyUserID
 order by storyNo DESC;
 ```
 
@@ -43,45 +53,68 @@ order by storyNo DESC;
 
 ``` mysql
 -- 피드에 맞는 사진, 동영상
-select feedImageUrl as feedImageVideoUrl from FeedImageTable where feedImageUserID = 'bllumusic' and feedImageFeedNo = 4
-union select feedVideoUrl as feedImageVideoUrl from FeedVideoTable where feedVideoUserID = 'bllumusic' and feedVideoFeedNo = 4;
+select feedImageUrl as feedImageVideoUrl
+from FeedImageTable
+where feedImageUserID = 'bllumusic'
+  and feedImageFeedNo = 4
+union
+select feedVideoUrl as feedImageVideoUrl
+from FeedVideoTable
+where feedVideoUserID = 'bllumusic'
+  and feedVideoFeedNo = 4;
 ```
 
 ![image](https://user-images.githubusercontent.com/43658658/132867724-5bf41e5f-32f6-46d7-a88d-66f6f0b01c94.png)
 
 ``` mysql
 -- 사진, 동영상을 제외한 나머지 타임라인 피드, 내(bllumusic)가 팔로우한 유저의 피드만 띄운다.
-select feedNo, profileImageUrl, feedHost,
-       if (feedNo in (select clickLikeFeedNo from ClickLikeTable group by clickLikeFeedNo),
-           if ((select count(clickLikeNo) as clickLikeCnt
-                from ClickLikeTable where clickLikeFeedNo = feedNo group by clickLikeFeedNo ) >= 2,
-                concat((select clickLikeUserID from ClickLikeTable where clickLikeNo =
-                (select max(clickLikeNo) from ClickLikeTable where clickLikeFeedNo = FeedTable.feedNo group by clickLikeFeedNo)),
+select feedNo,
+       profileImageUrl,
+       feedHost,
+       if(feedNo in (select clickLikeFeedNo from ClickLikeTable group by clickLikeFeedNo),
+          if((select count(clickLikeNo) as clickLikeCnt
+              from ClickLikeTable
+              where clickLikeFeedNo = feedNo
+              group by clickLikeFeedNo) >= 2,
+             concat((select clickLikeUserID
+                     from ClickLikeTable
+                     where clickLikeNo =
+                           (select max(clickLikeNo)
+                            from ClickLikeTable
+                            where clickLikeFeedNo = FeedTable.feedNo
+                            group by clickLikeFeedNo)),
                     '외 ', (select count(clickLikeNo) as clickLikeCnt
-                from ClickLikeTable where clickLikeFeedNo = feedNo group by clickLikeFeedNo )-1, '명이 좋아합니다.'),
-                concat((select clickLikeUserID as clickLikeCnt
-                from ClickLikeTable where clickLikeFeedNo = feedNo), '님이 좋아합니다.')), '')
-            as clickLikeCnt,
+                           from ClickLikeTable
+                           where clickLikeFeedNo = feedNo
+                           group by clickLikeFeedNo) - 1, '명이 좋아합니다.'),
+             concat((select clickLikeUserID as clickLikeCnt
+                     from ClickLikeTable
+                     where clickLikeFeedNo = feedNo), '님이 좋아합니다.')), '')
+                                                                        as clickLikeCnt,
        feedContent,
-       if (feedNo in (select replyFeedNo from ReplyTable group by replyFeedNo),
-           if ((select count(replyFeedNo) as replyCnt from ReplyTable
-               where replyFeedNo = feedNo group by replyFeedNo) >= 1,
-               concat('댓글 ', (select count(replyFeedNo) as replyCnt from ReplyTable
-               where replyFeedNo = feedNo group by replyFeedNo), '개 모두 보기'), ''), '') as replyCnt,
+       if(feedNo in (select replyFeedNo from ReplyTable group by replyFeedNo),
+          if((select count(replyFeedNo) as replyCnt
+              from ReplyTable
+              where replyFeedNo = feedNo
+              group by replyFeedNo) >= 1,
+             concat('댓글 ', (select count(replyFeedNo) as replyCnt
+                            from ReplyTable
+                            where replyFeedNo = feedNo
+                            group by replyFeedNo), '개 모두 보기'), ''), '') as replyCnt,
        case
-        when timestampdiff(second, feedCreatedAt, current_timestamp) <= 59
-        then '방금 전'
-        when timestampdiff(minute, feedCreatedAt, current_timestamp) <= 59
-        then concat(timestampdiff(minute, feedCreatedAt, current_timestamp),'분 전')
-        when timestampdiff(hour, feedCreatedAt, current_timestamp) <= 23
-        then concat(timestampdiff(hour, feedCreatedAt, current_timestamp), '시간 전')
-        else date_format(feedCreatedAt, '%m월 %d일')
-    end as feedCreatedAt
+           when timestampdiff(second, feedCreatedAt, current_timestamp) <= 59
+               then '방금 전'
+           when timestampdiff(minute, feedCreatedAt, current_timestamp) <= 59
+               then concat(timestampdiff(minute, feedCreatedAt, current_timestamp), '분 전')
+           when timestampdiff(hour, feedCreatedAt, current_timestamp) <= 23
+               then concat(timestampdiff(hour, feedCreatedAt, current_timestamp), '시간 전')
+           else date_format(feedCreatedAt, '%m월 %d일')
+           end                                                          as feedCreatedAt
 from FeedTable
-inner join ProfileTable
-on profileUserID = feedHost
-inner join (select followerHost from FollowerTable where followerUserID = 'bllumusic') as followerBllumusic
-on followerHost = feedHost
+         inner join ProfileTable
+                    on profileUserID = feedHost
+         inner join (select followerHost from FollowerTable where followerUserID = 'bllumusic') as followerBllumusic
+                    on followerHost = feedHost
 order by feedNo DESC;
 ```
 
