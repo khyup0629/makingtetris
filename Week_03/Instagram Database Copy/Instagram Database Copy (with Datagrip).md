@@ -1,6 +1,8 @@
-## 스토리 리스트
+# 타임라인 화면
 
 ![image](https://user-images.githubusercontent.com/43658658/132867830-2b43d479-e39a-40ef-b70a-ba6393e83046.png)
+
+## 스토리 리스트
 
 ``` mysql
 -- 스토리 리스트 : 내(bllumusic) 스토리 표시(스토리는 24시간 이내 올린 스토리만 노출)
