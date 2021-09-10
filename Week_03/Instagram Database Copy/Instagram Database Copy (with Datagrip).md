@@ -2,7 +2,7 @@
 
 ![image](https://user-images.githubusercontent.com/43658658/132867830-2b43d479-e39a-40ef-b70a-ba6393e83046.png)
 
-## 스토리 리스트
+> <h3>스토리 리스트</h3>
 
 ``` mysql
 -- 스토리 리스트 : 내(bllumusic) 스토리 표시(스토리는 24시간 이내 올린 스토리만 노출)
@@ -39,7 +39,7 @@ order by storyNo DESC;
 
 ![image](https://user-images.githubusercontent.com/43658658/132847785-f03fd450-d60f-4d61-a484-b82ff5125b71.png)
 
-## 타임라인
+> <h3>타임라인</h3>
 
 ``` mysql
 -- 피드에 맞는 사진, 동영상
@@ -87,6 +87,6 @@ order by feedNo DESC;
 
 ![image](https://user-images.githubusercontent.com/43658658/132862863-b36921c6-1334-42ea-9584-4bc1098825a8.png)
 
-## 회원님을 위한 추천
+# 회원님을 위한 추천
 
 ![image](https://user-images.githubusercontent.com/43658658/132868101-11c76ec7-eb03-4e5b-baef-415c789d0b51.png)
