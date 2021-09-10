@@ -90,3 +90,181 @@ order by feedNo DESC;
 # 회원님을 위한 추천
 
 ![image](https://user-images.githubusercontent.com/43658658/132868101-11c76ec7-eb03-4e5b-baef-415c789d0b51.png)
+
+``` mysql
+-- 블루뮤직과 맞팔한 유저 목록
+select followerUserID
+from (select followerUserID from FollowerTable where followerHost = 'bllumusic') as followerBllumusic
+where followerUserID in (select followerHost from FollowerTable where followerUserID = 'bllumusic');
+
+-- 블루뮤직과 맞팔한 유저들이 팔로잉하고 있는 유저들을 나열
+select followerNo, followerHost, followerUserID
+from FollowerTable
+where followerUserID in (select followerUserID
+                         from (select followerUserID
+                               from FollowerTable
+                               where followerHost = 'bllumusic') as followerBllumusic
+                         where followerUserID in
+                               (select followerHost from FollowerTable where followerUserID = 'bllumusic'));
+
+-- 블루뮤직과 맞팔한 유저들이 팔로잉하고 있는 유저들을 나열하고 팔로잉 받은 수를 카운트,
+select followerHost, count(followerHost) as followerCnt
+from (select followerNo, followerHost, followerUserID
+      from FollowerTable
+      where followerUserID in (select followerUserID
+                               from (select followerUserID
+                                     from FollowerTable
+                                     where followerHost = 'bllumusic') as followerBllumusic
+                               where followerUserID in (select followerHost
+                                                        from FollowerTable
+                                                        where followerUserID = 'bllumusic'))) as allFollowingTable
+group by followerHost;
+
+-- 블루뮤직과 맞팔한 유저들이 팔로잉하고 있는 유저별 가장 마지막에 팔로우한 유저
+select FollowerTable.followerHost, followerUserID as recoRecentOverlapUserID
+from (select max(followerNo) as lastFollowerNo, followerHost
+      from (select followerNo, followerHost, followerUserID
+            from FollowerTable
+            where followerUserID in (select followerUserID
+                                     from (select followerUserID
+                                           from FollowerTable
+                                           where followerHost = 'bllumusic') as followerBllumusic
+                                     where followerUserID in
+                                           (select followerHost from FollowerTable where followerUserID = 'bllumusic'))
+           ) as lastFollower
+      group by followerHost
+     ) as lastFollowerTable
+         inner join FollowerTable
+                    on followerNo = lastFollowerNo;
+
+-- 카운트가 2이상이고, 블루뮤직(자신)이 아니며, 블루뮤직(자신)이 팔로우하지 않았으면 추천
+select profileImageUrl         as recoProfileImage,
+       followerHost            as recoUserID,
+       if(followerCnt = 2,
+          concat((select recoRecentOverlapUserID
+                  from (select FollowerTable.followerHost, followerUserID as recoRecentOverlapUserID
+                        from (select max(followerNo) as lastFollowerNo, followerHost
+                              from (select followerNo, followerHost, followerUserID
+                                    from FollowerTable
+                                    where followerUserID in (select followerUserID
+                                                             from (select followerUserID
+                                                                   from FollowerTable
+                                                                   where followerHost = 'bllumusic') as followerBllumusic
+                                                             where followerUserID in (select followerHost
+                                                                                      from FollowerTable
+                                                                                      where followerUserID = 'bllumusic'))
+                                   ) as lastFollower
+                              group by followerHost
+                             ) as lastFollowerTable
+                                 inner join FollowerTable
+                                            on followerNo = lastFollowerNo) as lastFollowerTable
+                  where followerCntTable.followerHost = followerHost), '님 외 ', '1명이 팔로우합니다'),
+          concat((select recoRecentOverlapUserID
+                  from (select FollowerTable.followerHost, followerUserID as recoRecentOverlapUserID
+                        from (select max(followerNo) as lastFollowerNo, followerHost
+                              from (select followerNo, followerHost, followerUserID
+                                    from FollowerTable
+                                    where followerUserID in (select followerUserID
+                                                             from (select followerUserID
+                                                                   from FollowerTable
+                                                                   where followerHost = 'bllumusic') as followerBllumusic
+                                                             where followerUserID in (select followerHost
+                                                                                      from FollowerTable
+                                                                                      where followerUserID = 'bllumusic'))
+                                   ) as lastFollower
+                              group by followerHost
+                             ) as lastFollowerTable
+                                 inner join FollowerTable
+                                            on followerNo = lastFollowerNo) as lastFollowerTable
+                  where followerCntTable.followerHost = followerHost), '님 외 ', followerCnt - 1,
+                 '명이 팔로우합니다')) as recoOverlapUserCnt
+from (select followerHost, count(followerHost) as followerCnt
+      from (select followerHost
+            from FollowerTable
+            where followerUserID in (select followerUserID
+                                     from (select followerUserID
+                                           from FollowerTable
+                                           where followerHost = 'bllumusic') as followerBllumusic
+                                     where followerUserID in (select followerHost
+                                                              from FollowerTable
+                                                              where followerUserID = 'bllumusic'))) as allFollowingTable
+      group by followerHost) as followerCntTable
+         inner join ProfileTable
+                    on profileUserID = followerHost
+where followerCnt >= 2
+  and followerHost != 'bllumusic'
+  and followerHost not in (select followerHost from FollowerTable where followerUserID = 'bllumusic');
+
+-- 차집합, 블루뮤직의 팔로워 중 블루뮤직이 팔로잉하지 않은 유저 목록(맞팔 X)
+select profileImageUrl, followerUserID, '회원님을 팔로우합니다.'
+from (select followerUserID from FollowerTable where followerHost = 'bllumusic') as followerBllumusic
+         inner join ProfileTable
+                    on profileUserID = followerUserID
+where followerUserID not in (select followerHost from FollowerTable where followerUserID = 'bllumusic');
+
+-- 두 추천 조건을 모두 합친 유저 목록
+select profileImageUrl         as recoProfileImage,
+       followerHost            as recoUserID,
+       if(followerCnt = 2,
+          concat((select recoRecentOverlapUserID
+                  from (select FollowerTable.followerHost, followerUserID as recoRecentOverlapUserID
+                        from (select max(followerNo) as lastFollowerNo, followerHost
+                              from (select followerNo, followerHost, followerUserID
+                                    from FollowerTable
+                                    where followerUserID in (select followerUserID
+                                                             from (select followerUserID
+                                                                   from FollowerTable
+                                                                   where followerHost = 'bllumusic') as followerBllumusic
+                                                             where followerUserID in (select followerHost
+                                                                                      from FollowerTable
+                                                                                      where followerUserID = 'bllumusic'))
+                                   ) as lastFollower
+                              group by followerHost
+                             ) as lastFollowerTable
+                                 inner join FollowerTable
+                                            on followerNo = lastFollowerNo) as lastFollowerTable
+                  where followerCntTable.followerHost = followerHost), '님 외 ', '1명이 팔로우합니다'),
+          concat((select recoRecentOverlapUserID
+                  from (select FollowerTable.followerHost, followerUserID as recoRecentOverlapUserID
+                        from (select max(followerNo) as lastFollowerNo, followerHost
+                              from (select followerNo, followerHost, followerUserID
+                                    from FollowerTable
+                                    where followerUserID in (select followerUserID
+                                                             from (select followerUserID
+                                                                   from FollowerTable
+                                                                   where followerHost = 'bllumusic') as followerBllumusic
+                                                             where followerUserID in (select followerHost
+                                                                                      from FollowerTable
+                                                                                      where followerUserID = 'bllumusic'))
+                                   ) as lastFollower
+                              group by followerHost
+                             ) as lastFollowerTable
+                                 inner join FollowerTable
+                                            on followerNo = lastFollowerNo) as lastFollowerTable
+                  where followerCntTable.followerHost = followerHost), '님 외 ', followerCnt - 1,
+                 '명이 팔로우합니다')) as recoOverlapUserCnt
+from (select followerHost, count(followerHost) as followerCnt
+      from (select followerHost
+            from FollowerTable
+            where followerUserID in (select followerUserID
+                                     from (select followerUserID
+                                           from FollowerTable
+                                           where followerHost = 'bllumusic') as followerBllumusic
+                                     where followerUserID in (select followerHost
+                                                              from FollowerTable
+                                                              where followerUserID = 'bllumusic'))) as allFollowingTable
+      group by followerHost) as followerCntTable
+         inner join ProfileTable
+                    on profileUserID = followerHost
+where followerCnt >= 2
+  and followerHost != 'bllumusic'
+  and followerHost not in (select followerHost from FollowerTable where followerUserID = 'bllumusic')
+union
+select profileImageUrl, followerUserID, '회원님을 팔로우합니다.'
+from (select followerUserID from FollowerTable where followerHost = 'bllumusic') as followerBllumusic
+         inner join ProfileTable
+                    on profileUserID = followerUserID
+where followerUserID not in (select followerHost from FollowerTable where followerUserID = 'bllumusic');
+```
+
+![image](https://user-images.githubusercontent.com/43658658/132893641-cb1f4a9c-8215-4126-803d-78276c557f93.png)
