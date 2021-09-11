@@ -301,3 +301,54 @@ where followerUserID not in (select followerHost from FollowerTable where follow
 ```
 
 ![image](https://user-images.githubusercontent.com/43658658/132893641-cb1f4a9c-8215-4126-803d-78276c557f93.png)
+
+``` mysql
+select profileImageUrl, concat(profileUserID, '님이 회원님의 사진을 좋아합니다.')
+from ProfileTable;
+
+select * from ClickLikeTable;
+
+select * from FeedTable where feedHost = 'bllumusic';
+
+select *
+from FeedImageTable
+where feedimageno in (select min(feedImageNo) from FeedImageTable group by feedImageFeedNo)
+  and feedImageUserID = 'bllumusic'
+union all
+select *
+from FeedVideoTable
+where feedVideoNo in (select min(feedVideoNo) from FeedVideoTable group by feedvideoFeedNo)
+  and feedvideoUserID = 'bllumusic';
+
+select min(feedImageCreatedAt), feedImageFeedNo
+from (select *
+from FeedImageTable
+where feedimageno in (select min(feedImageNo) from FeedImageTable group by feedImageFeedNo)
+  and feedImageUserID = 'bllumusic'
+union all
+select *
+from FeedVideoTable
+where feedVideoNo in (select min(feedVideoNo) from FeedVideoTable group by feedvideoFeedNo)
+  and feedvideoUserID = 'bllumusic') as grip group by feedImageFeedNo;
+
+select *
+from (select *
+from FeedImageTable
+where feedimageno in (select min(feedImageNo) from FeedImageTable group by feedImageFeedNo)
+  and feedImageUserID = 'bllumusic'
+union all
+select *
+from FeedVideoTable
+where feedVideoNo in (select min(feedVideoNo) from FeedVideoTable group by feedvideoFeedNo)
+  and feedvideoUserID = 'bllumusic') as grip2
+where feedImageFeedNo in (select feedImageFeedNo
+from (select *
+from FeedImageTable
+where feedimageno in (select min(feedImageNo) from FeedImageTable group by feedImageFeedNo)
+  and feedImageUserID = 'bllumusic'
+union all
+select *
+from FeedVideoTable
+where feedVideoNo in (select min(feedVideoNo) from FeedVideoTable group by feedvideoFeedNo)
+  and feedvideoUserID = 'bllumusic') as grip group by feedImageFeedNo);
+```
