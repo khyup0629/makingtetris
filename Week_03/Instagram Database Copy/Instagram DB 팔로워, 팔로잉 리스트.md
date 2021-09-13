@@ -4,6 +4,8 @@
 
 > <h3>팔로워 수</h3>
 
+![image](https://user-images.githubusercontent.com/43658658/133091465-5b1eaf5d-f833-4ba3-a388-4a7e15f77e49.png)
+
 ``` mysql
 -- 블루뮤직의 팔로워 수
 select count(followerNo) as bllumusicFollower
@@ -12,6 +14,8 @@ where followerHost = 'bllumusic';
 ```
 
 > <h3>팔로워 리스트</h3>
+
+![image](https://user-images.githubusercontent.com/43658658/133091507-dab50d03-8131-46e8-93f7-401b770f3884.png)
 
 ``` mysql
 -- 블루뮤직과 맞팔하지 않은 유저 목록
@@ -97,6 +101,8 @@ where followerUserID in (select followerHost from FollowerTable where followerUs
 ![image](https://user-images.githubusercontent.com/43658658/133090413-d10f93c0-9b0c-40ac-bceb-36af7a2fe9b4.png)
 
 # 팔로잉 리스트
+
+![image](https://user-images.githubusercontent.com/43658658/133091588-d734077c-98d5-4bab-b09e-17b140196ab9.png)
 
 > <h3>팔로잉 수</h3>
 
