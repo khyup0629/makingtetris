@@ -4,6 +4,8 @@
 
 > <h3>게시글 별 좋아요 현황</h3>
 
+![image](https://user-images.githubusercontent.com/43658658/133059140-6988406b-e0ae-4654-9aac-c55c38f93d3c.png)
+
 ``` mysql
 -- 블루뮤직 피드별 이미지 URL
 select *
@@ -295,7 +297,7 @@ order by clickLikeNo DESC;
 
 ![image](https://user-images.githubusercontent.com/43658658/133036981-1adfcdc8-335f-423c-88f6-b2c9de38e09b.png)
 
-> <h3>팔로우 활동 리스트(한 명씩)</h3>
+> <h3>팔로우 활동 리스트(한 명씩), 스토리 시청 여부에 따라 프로필 이미지 테두리 표시</h3>
 
 ``` mysql
 -- 블루뮤직을 팔로우한 유저 목록(한 명씩), 시간 순으로 내림차순 정렬
@@ -352,6 +354,8 @@ order by followerNo DESC;
 ![image](https://user-images.githubusercontent.com/43658658/133047395-75cc7422-944a-4f8d-824e-182de09809e6.png)
 
 > <h3>일별로 팔로우 모으기(가장 최근 유저와 두 번째 최근 유저 나타내기)</h3>
+
+![image](https://user-images.githubusercontent.com/43658658/133059242-bbe34790-b5ad-4772-adb1-047d3ac32173.png)
 
 ``` mysql
 -- 일별로 블루뮤직을 팔로우한 가장 최근 번호
@@ -419,7 +423,7 @@ select lastFirstProfile.profileImageUrl      as actRecentUserProfileImage1,
                                   lastSecondFollowerTable.followerUserID, '님이 팔로우합니다.'),
           concat(lastFirstFollowerTable.followerUserID, '님, ',
                  lastSecondFollowerTable.followerUserID, '님 외 ',
-                 followerCnt, '명이 팔로우합니다.')) as actFollowUserCnt,
+                 followerCnt, '명이 회원님을 팔로우하기 시작했습니다.')) as actFollowUserCnt,
        case
            when timestampdiff(second, followerBllumusic.groupPerDay, '2021-09-11 00:00:00') < 60
                then concat(timestampdiff(second, followerBllumusic.groupPerDay, '2021-09-11 00:00:00'), '초')
@@ -462,4 +466,4 @@ from (select date_format(followerCreatedAt, '%Y-%m-%d') as groupPerDay, count(fo
 order by lastSecondFollowerTable.followerNo DESC;
 ```
 
-![image](https://user-images.githubusercontent.com/43658658/133058822-7b63aecb-a999-482c-a776-563829aa19f2.png)
+![image](https://user-images.githubusercontent.com/43658658/133059753-190806ed-34e4-436f-a75a-bfb79eab5538.png)
