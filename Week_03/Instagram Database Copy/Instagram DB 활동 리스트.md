@@ -292,3 +292,174 @@ from (select clickLikeNo,
                     on firstContentPerFeed.feedImageFeedNo = clickLikeOnePerson.clickLikeFeedNo
 order by clickLikeNo DESC;
 ```
+
+![image](https://user-images.githubusercontent.com/43658658/133036981-1adfcdc8-335f-423c-88f6-b2c9de38e09b.png)
+
+> <h3>팔로우 활동 리스트(한 명씩)</h3>
+
+``` mysql
+-- 블루뮤직을 팔로우한 유저 목록(한 명씩), 시간 순으로 내림차순 정렬
+select *
+from FollowerTable
+where followerHost = 'bllumusic'
+order by followerNo DESC;
+
+-- 24시간 이내(9월 11일 기준)로 스토리를 올린 리스트
+select *
+from StoryTable
+where timestampdiff(day, storyCreatedAt, '2021-09-11 00:00:00') < 1;
+
+-- 블루뮤직이 보지 않은 스토리, 보지 않은 스토리('No')는 프로필 이미지 테두리가 생김.
+select storyUserID
+from StoryTable
+where timestampdiff(day, storyCreatedAt, '2021-09-11 00:00:00') < 1
+  and 'No' =
+      if(storyNo in (select storyWatchingStoryNo from StoryWatchingTable where storyWatchingUserID = 'bllumusic'),
+         'Yes', 'No');
+
+-- 유저 프로필 이미지를 포함한 팔로우 유저 목록(한 명씩), 프로필 이미지는 스토리를 봤는지 여부가 포함되어야 함
+select profileImageUrl,
+       if(followerUserID in (select storyUserID
+                             from StoryTable
+                             where timestampdiff(day, storyCreatedAt, '2021-09-11 00:00:00') < 1
+                               and 'No' =
+                                   if(storyNo in (select storyWatchingStoryNo
+                                                  from StoryWatchingTable
+                                                  where storyWatchingUserID = 'bllumusic'),
+                                      'Yes', 'No')),
+          'No',
+          'Yes') as isStoryWatching,
+       concat(followerUserID, '님이 회원님을 팔로우합니다.'),
+       case
+           when timestampdiff(second, followerCreatedAt, '2021-09-11 00:00:00') < 60
+               then concat(timestampdiff(second, followerCreatedAt, '2021-09-11 00:00:00'), '초')
+           when timestampdiff(minute, followerCreatedAt, '2021-09-11 00:00:00') < 60
+               then concat(timestampdiff(minute, followerCreatedAt, '2021-09-11 00:00:00'), '분')
+           when timestampdiff(hour, followerCreatedAt, '2021-09-11 00:00:00') < 24
+               then concat(timestampdiff(hour, followerCreatedAt, '2021-09-11 00:00:00'), '시간')
+           when timestampdiff(day, followerCreatedAt, '2021-09-11 00:00:00') < 7
+               then concat(timestampdiff(day, followerCreatedAt, '2021-09-11 00:00:00'), '일')
+           else date_format(followerCreatedAt, '%m월 %d일')
+           end   as lastFeedTimestamp
+from (select *
+      from FollowerTable
+      where followerHost = 'bllumusic') as followerListTable
+         inner join ProfileTable
+                    on ProfileTable.profileUserID = followerListTable.followerUserID
+order by followerNo DESC;
+```
+
+![image](https://user-images.githubusercontent.com/43658658/133047395-75cc7422-944a-4f8d-824e-182de09809e6.png)
+
+> <h3>일별로 팔로우 모으기(가장 최근 유저와 두 번째 최근 유저 나타내기)</h3>
+
+``` mysql
+-- 일별로 블루뮤직을 팔로우한 가장 최근 번호
+select max(followerNo), date_format(followerCreatedAt, '%Y-%m-%d')
+from (select *
+      from FollowerTable
+      where followerHost = 'bllumusic') as followerBllumusic
+group by date_format(followerCreatedAt, '%Y-%m-%d');
+
+-- 가장 큰 번호와 대응되는 유저
+select followerNo, followerUserID, followerCreatedAt
+from FollowerTable
+where followerNo in (select max(followerNo)
+                     from (select *
+                           from FollowerTable
+                           where followerHost = 'bllumusic') as followerBllumusic
+                     group by date_format(followerCreatedAt, '%Y-%m-%d'));
+
+-- 블루 뮤직을 팔로우한 가장 최근 팔로우 번호보다 작은 리스트
+select *
+from FollowerTable
+where followerNo not in (select max(followerNo)
+                         from (select *
+                               from FollowerTable
+                               where followerHost = 'bllumusic') as followerBllumusic
+                         group by date_format(followerCreatedAt, '%Y-%m-%d'))
+  and followerHost = 'bllumusic';
+
+-- 블루 뮤직을 팔로우한 가장 최근 팔로우 번호보다 작은 리스트 중에서 최대
+-- 즉, 두 번째로 최근인 팔로우 번호
+select max(followerNo), date_format(followerCreatedAt, '%Y-%m-%d')
+from (select *
+      from FollowerTable
+      where followerNo not in (select max(followerNo)
+                               from (select *
+                                     from FollowerTable
+                                     where followerHost = 'bllumusic') as followerBllumusic
+                               group by date_format(followerCreatedAt, '%Y-%m-%d'))
+        and followerHost = 'bllumusic') as lastRecentTwoFollowerNo
+group by date_format(followerCreatedAt, '%Y-%m-%d');
+
+-- 두 번째로 큰 번호와 대응되는 유저
+select followerNo, followerUserID, followerCreatedAt
+from FollowerTable
+where followerNo in (select max(followerNo)
+                     from (select *
+                           from FollowerTable
+                           where followerNo not in (select max(followerNo)
+                                                    from (select *
+                                                          from FollowerTable
+                                                          where followerHost = 'bllumusic') as followerBllumusic
+                                                    group by date_format(followerCreatedAt, '%Y-%m-%d'))
+                             and followerHost = 'bllumusic') as lastRecentTwoFollowerNo
+                     group by date_format(followerCreatedAt, '%Y-%m-%d'));
+
+-- 블루 뮤직의 일별 팔로우 수
+select date_format(followerCreatedAt, '%Y-%m-%d'), count(followerNo)
+from (select * from FollowerTable where followerHost = 'bllumusic') as followerBllumusic
+group by date_format(followerCreatedAt, '%Y-%m-%d');
+
+-- 일별 블루뮤직의 팔로우 활동 리스트(유저 프로필 이미지 2개, 신규 팔로우 유저 수, 가장 최근 팔로우 시간
+select lastFirstProfile.profileImageUrl      as actRecentUserProfileImage1,
+       lastSecondProfile.profileImageUrl     as actRecentUserProfileImage2,
+       if(followerCnt = 2, concat(lastFirstFollowerTable.followerUserID, '님, ',
+                                  lastSecondFollowerTable.followerUserID, '님이 팔로우합니다.'),
+          concat(lastFirstFollowerTable.followerUserID, '님, ',
+                 lastSecondFollowerTable.followerUserID, '님 외 ',
+                 followerCnt, '명이 팔로우합니다.')) as actFollowUserCnt,
+       case
+           when timestampdiff(second, followerBllumusic.groupPerDay, '2021-09-11 00:00:00') < 60
+               then concat(timestampdiff(second, followerBllumusic.groupPerDay, '2021-09-11 00:00:00'), '초')
+           when timestampdiff(minute, followerBllumusic.groupPerDay, '2021-09-11 00:00:00') < 60
+               then concat(timestampdiff(minute, followerBllumusic.groupPerDay, '2021-09-11 00:00:00'), '분')
+           when timestampdiff(hour, followerBllumusic.groupPerDay, '2021-09-11 00:00:00') < 24
+               then concat(timestampdiff(hour, followerBllumusic.groupPerDay, '2021-09-11 00:00:00'), '시간')
+           when timestampdiff(day, followerBllumusic.groupPerDay, '2021-09-11 00:00:00') < 7
+               then concat(timestampdiff(day, followerBllumusic.groupPerDay, '2021-09-11 00:00:00'), '일')
+           else date_format(followerBllumusic.groupPerDay, '%m월 %d일')
+           end                               as actRecentFollowTime
+from (select date_format(followerCreatedAt, '%Y-%m-%d') as groupPerDay, count(followerNo) as followerCnt
+      from (select * from FollowerTable where followerHost = 'bllumusic') as followerBllumusic
+      group by date_format(followerCreatedAt, '%Y-%m-%d')) as followerBllumusic
+         inner join (select followerNo, followerUserID, date_format(followerCreatedAt, '%Y-%m-%d') as groupPerDay
+                     from FollowerTable
+                     where followerNo in (select max(followerNo)
+                                          from (select *
+                                                from FollowerTable
+                                                where followerHost = 'bllumusic') as followerBllumusic
+                                          group by date_format(followerCreatedAt, '%Y-%m-%d'))) as lastFirstFollowerTable
+                    on lastFirstFollowerTable.groupPerDay = followerBllumusic.groupPerDay
+         inner join (select followerNo, followerUserID, date_format(followerCreatedAt, '%Y-%m-%d') as groupPerDay
+                     from FollowerTable
+                     where followerNo in (select max(followerNo)
+                                          from (select *
+                                                from FollowerTable
+                                                where followerNo not in (select max(followerNo)
+                                                                         from (select *
+                                                                               from FollowerTable
+                                                                               where followerHost = 'bllumusic') as followerBllumusic
+                                                                         group by date_format(followerCreatedAt, '%Y-%m-%d'))
+                                                  and followerHost = 'bllumusic') as lastRecentTwoFollowerNo
+                                          group by date_format(followerCreatedAt, '%Y-%m-%d'))) as lastSecondFollowerTable
+                    on lastSecondFollowerTable.groupPerDay = followerBllumusic.groupPerDay
+         inner join ProfileTable as lastFirstProfile
+                    on lastFirstProfile.profileUserID = lastFirstFollowerTable.followerUserID
+         inner join ProfileTable as lastSecondProfile
+                    on lastSecondProfile.profileUserID = lastSecondFollowerTable.followerUserID
+order by lastSecondFollowerTable.followerNo DESC;
+```
+
+![image](https://user-images.githubusercontent.com/43658658/133058822-7b63aecb-a999-482c-a776-563829aa19f2.png)
