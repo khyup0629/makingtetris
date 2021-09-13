@@ -4,6 +4,8 @@
 
 > <h3>유저 프로필 정보</h3>
 
+![image](https://user-images.githubusercontent.com/43658658/133085757-fd6c2a40-d0c6-400b-9d35-2d15bc4c9a3e.png)
+
 ``` mysql
 -- 블루뮤직의 피드 게시물 개수
 select count(feedNo) as bllumusicFeedCnt from FeedTable where feedHost = 'bllumusic';
@@ -28,6 +30,8 @@ where profileUserID = 'bllumusic';
 
 > <h3>하이라이트</h3>
 
+![image](https://user-images.githubusercontent.com/43658658/133085790-bd4b898c-73b0-4fdf-b8b0-1be0ba7ce51b.png)
+
 ``` mysql
 -- 블루뮤직의 하이라이트
 select hlCoverImageUrl as highlightCover, hlTitle as highlightTitle
@@ -38,6 +42,8 @@ where hlHost = 'bllumusic';
 ![image](https://user-images.githubusercontent.com/43658658/133081505-4fd9e4c4-3c3b-414d-9e84-dc863efdece1.png)
 
 > <h3>유저 피드(전체)</h3>
+
+![image](https://user-images.githubusercontent.com/43658658/133085846-aeb93bca-d253-42ef-a4e1-bbee8d399df2.png)
 
 ``` mysql
 -- 블루뮤직의 전체 피드, 컨텐츠 이미지 or 동영상 구분
