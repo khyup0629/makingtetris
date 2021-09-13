@@ -2,7 +2,86 @@
 
 ![image](https://user-images.githubusercontent.com/43658658/133030941-f9fb1d1a-cc58-4ab0-bf62-d6d3f010a7ba.png)
 
-> <h3>게시글 별 좋아요 현황</h3>
+> <h3>좋아요 활동 리스트(한 명씩)</h3>
+
+``` mysql
+-- 블루뮤직의 피드를 좋아요한 유저(한 명씩), 시간 순서대로 내림차순
+select clickLikeFeedNo,
+       clickLikeUserID,
+       case
+           when timestampdiff(second, clickLikeCreatedAt, current_timestamp) < 60
+               then concat(timestampdiff(second, clickLikeCreatedAt, current_timestamp), '초')
+           when timestampdiff(minute, clickLikeCreatedAt, current_timestamp) < 60
+               then concat(timestampdiff(minute, clickLikeCreatedAt, current_timestamp), '분')
+           when timestampdiff(hour, clickLikeCreatedAt, current_timestamp) < 24
+               then concat(timestampdiff(hour, clickLikeCreatedAt, current_timestamp), '시간')
+           when timestampdiff(day, clickLikeCreatedAt, current_timestamp) < 7
+               then concat(timestampdiff(day, clickLikeCreatedAt, current_timestamp), '일')
+           else date_format(clickLikeCreatedAt, '%m월 %d일')
+           end as lastFeedTimestamp
+from ClickLikeTable
+where clickLikeFeedNo in (select feedNo
+                          from FeedTable
+                          where feedHost = 'bllumusic')
+order by clickLikeNo DESC;
+
+-- 유저 프로필 이미지, 피드 이미지를 추가한 좋아요 활동 리스트(한 명씩)
+select profileImageUrl,
+       concat(clickLikeUserID, '님이 회원님의 게시물을 좋아합니다.') as actClickLikeUser,
+       lastFeedTimestamp,
+       firstUrlPerFeed
+from (select clickLikeNo,
+             clickLikeFeedNo,
+             clickLikeUserID,
+             case
+                 when timestampdiff(second, clickLikeCreatedAt, current_timestamp) < 60
+                     then concat(timestampdiff(second, clickLikeCreatedAt, current_timestamp), '초')
+                 when timestampdiff(minute, clickLikeCreatedAt, current_timestamp) < 60
+                     then concat(timestampdiff(minute, clickLikeCreatedAt, current_timestamp), '분')
+                 when timestampdiff(hour, clickLikeCreatedAt, current_timestamp) < 24
+                     then concat(timestampdiff(hour, clickLikeCreatedAt, current_timestamp), '시간')
+                 when timestampdiff(day, clickLikeCreatedAt, current_timestamp) < 7
+                     then concat(timestampdiff(day, clickLikeCreatedAt, current_timestamp), '일')
+                 else date_format(clickLikeCreatedAt, '%m월 %d일')
+                 end as lastFeedTimestamp
+      from ClickLikeTable
+      where clickLikeFeedNo in (select feedNo
+                                from FeedTable
+                                where feedHost = 'bllumusic')) as clickLikeOnePerson
+         inner join ProfileTable
+                    on ProfileTable.profileUserID = clickLikeOnePerson.clickLikeUserID
+         inner join (select feedImageFeedNo, feedImageUrl as firstUrlPerFeed
+                     from (select *
+                           from FeedImageTable
+                           where feedimageno in
+                                 (select min(feedImageNo) from FeedImageTable group by feedImageFeedNo)
+                             and feedImageUserID = 'bllumusic'
+                           union all
+                           select *
+                           from FeedVideoTable
+                           where feedVideoNo in
+                                 (select min(feedVideoNo) from FeedVideoTable group by feedvideoFeedNo)
+                             and feedvideoUserID = 'bllumusic') as contentUrlPerFeed
+                     where feedImageNo in (select min(feedImageNo)
+                                           from (select *
+                                                 from FeedImageTable
+                                                 where feedimageno in
+                                                       (select min(feedImageNo) from FeedImageTable group by feedImageFeedNo)
+                                                   and feedImageUserID = 'bllumusic'
+                                                 union all
+                                                 select *
+                                                 from FeedVideoTable
+                                                 where feedVideoNo in
+                                                       (select min(feedVideoNo) from FeedVideoTable group by feedvideoFeedNo)
+                                                   and feedvideoUserID = 'bllumusic') as onlyOneUrlPerFeed
+                                           group by feedImageFeedNo)) as firstContentPerFeed
+                    on firstContentPerFeed.feedImageFeedNo = clickLikeOnePerson.clickLikeFeedNo
+order by clickLikeNo DESC;
+```
+
+![image](https://user-images.githubusercontent.com/43658658/133036981-1adfcdc8-335f-423c-88f6-b2c9de38e09b.png)
+
+> <h3>게시글 별 좋아요 활동 리스트</h3>
 
 ![image](https://user-images.githubusercontent.com/43658658/133059140-6988406b-e0ae-4654-9aac-c55c38f93d3c.png)
 
@@ -217,85 +296,6 @@ order by clickLikeNo DESC;
 ```
 
 ![image](https://user-images.githubusercontent.com/43658658/133030803-8e0b1aef-ff87-4366-8e4d-22e9865f8f47.png)
-
-> <h3>좋아요 활동 리스트(한 명씩)</h3>
-
-``` mysql
--- 블루뮤직의 피드를 좋아요한 유저(한 명씩), 시간 순서대로 내림차순
-select clickLikeFeedNo,
-       clickLikeUserID,
-       case
-           when timestampdiff(second, clickLikeCreatedAt, current_timestamp) < 60
-               then concat(timestampdiff(second, clickLikeCreatedAt, current_timestamp), '초')
-           when timestampdiff(minute, clickLikeCreatedAt, current_timestamp) < 60
-               then concat(timestampdiff(minute, clickLikeCreatedAt, current_timestamp), '분')
-           when timestampdiff(hour, clickLikeCreatedAt, current_timestamp) < 24
-               then concat(timestampdiff(hour, clickLikeCreatedAt, current_timestamp), '시간')
-           when timestampdiff(day, clickLikeCreatedAt, current_timestamp) < 7
-               then concat(timestampdiff(day, clickLikeCreatedAt, current_timestamp), '일')
-           else date_format(clickLikeCreatedAt, '%m월 %d일')
-           end as lastFeedTimestamp
-from ClickLikeTable
-where clickLikeFeedNo in (select feedNo
-                          from FeedTable
-                          where feedHost = 'bllumusic')
-order by clickLikeNo DESC;
-
--- 유저 프로필 이미지, 피드 이미지를 추가한 좋아요 활동 리스트(한 명씩)
-select profileImageUrl,
-       concat(clickLikeUserID, '님이 회원님의 게시물을 좋아합니다.') as actClickLikeUser,
-       lastFeedTimestamp,
-       firstUrlPerFeed
-from (select clickLikeNo,
-             clickLikeFeedNo,
-             clickLikeUserID,
-             case
-                 when timestampdiff(second, clickLikeCreatedAt, current_timestamp) < 60
-                     then concat(timestampdiff(second, clickLikeCreatedAt, current_timestamp), '초')
-                 when timestampdiff(minute, clickLikeCreatedAt, current_timestamp) < 60
-                     then concat(timestampdiff(minute, clickLikeCreatedAt, current_timestamp), '분')
-                 when timestampdiff(hour, clickLikeCreatedAt, current_timestamp) < 24
-                     then concat(timestampdiff(hour, clickLikeCreatedAt, current_timestamp), '시간')
-                 when timestampdiff(day, clickLikeCreatedAt, current_timestamp) < 7
-                     then concat(timestampdiff(day, clickLikeCreatedAt, current_timestamp), '일')
-                 else date_format(clickLikeCreatedAt, '%m월 %d일')
-                 end as lastFeedTimestamp
-      from ClickLikeTable
-      where clickLikeFeedNo in (select feedNo
-                                from FeedTable
-                                where feedHost = 'bllumusic')) as clickLikeOnePerson
-         inner join ProfileTable
-                    on ProfileTable.profileUserID = clickLikeOnePerson.clickLikeUserID
-         inner join (select feedImageFeedNo, feedImageUrl as firstUrlPerFeed
-                     from (select *
-                           from FeedImageTable
-                           where feedimageno in
-                                 (select min(feedImageNo) from FeedImageTable group by feedImageFeedNo)
-                             and feedImageUserID = 'bllumusic'
-                           union all
-                           select *
-                           from FeedVideoTable
-                           where feedVideoNo in
-                                 (select min(feedVideoNo) from FeedVideoTable group by feedvideoFeedNo)
-                             and feedvideoUserID = 'bllumusic') as contentUrlPerFeed
-                     where feedImageNo in (select min(feedImageNo)
-                                           from (select *
-                                                 from FeedImageTable
-                                                 where feedimageno in
-                                                       (select min(feedImageNo) from FeedImageTable group by feedImageFeedNo)
-                                                   and feedImageUserID = 'bllumusic'
-                                                 union all
-                                                 select *
-                                                 from FeedVideoTable
-                                                 where feedVideoNo in
-                                                       (select min(feedVideoNo) from FeedVideoTable group by feedvideoFeedNo)
-                                                   and feedvideoUserID = 'bllumusic') as onlyOneUrlPerFeed
-                                           group by feedImageFeedNo)) as firstContentPerFeed
-                    on firstContentPerFeed.feedImageFeedNo = clickLikeOnePerson.clickLikeFeedNo
-order by clickLikeNo DESC;
-```
-
-![image](https://user-images.githubusercontent.com/43658658/133036981-1adfcdc8-335f-423c-88f6-b2c9de38e09b.png)
 
 > <h3>팔로우 활동 리스트(한 명씩), 스토리 시청 여부에 따라 프로필 이미지 테두리 표시</h3>
 
