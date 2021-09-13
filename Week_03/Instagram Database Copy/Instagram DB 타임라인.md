@@ -4,6 +4,8 @@
 
 > <h3>스토리 리스트</h3>
 
+![image](https://user-images.githubusercontent.com/43658658/133075185-e249f1a1-6d65-4774-a81a-3f945c6a8bf4.png)
+
 ``` mysql
 -- 스토리 리스트 : 내(bllumusic) 스토리 표시(스토리는 24시간 이내 올린 스토리만 노출)
 select profileImageurl as storyProfileImage,
@@ -50,6 +52,8 @@ order by storyNo DESC;
 ![image](https://user-images.githubusercontent.com/43658658/132847785-f03fd450-d60f-4d61-a484-b82ff5125b71.png)
 
 > <h3>타임라인</h3>
+
+![image](https://user-images.githubusercontent.com/43658658/133075246-1fc4521f-eb4a-4a80-b47c-aa815836567f.png)
 
 ``` mysql
 -- 피드에 맞는 사진, 동영상
