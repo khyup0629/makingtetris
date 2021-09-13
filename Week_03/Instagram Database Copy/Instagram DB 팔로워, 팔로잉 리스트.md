@@ -106,6 +106,8 @@ where followerUserID in (select followerHost from FollowerTable where followerUs
 
 > <h3>팔로잉 수</h3>
 
+![image](https://user-images.githubusercontent.com/43658658/133091680-8377f7e1-1aaa-4cc3-abb4-ebbcbc48d8a5.png)
+
 ``` mysql
 -- 블루뮤직이 팔로우하는 유저 수
 select count(followerNo) as bllumusicFollowing
@@ -116,6 +118,8 @@ where followerUserID = 'bllumusic';
 ![image](https://user-images.githubusercontent.com/43658658/133087592-8e8c8dc7-2668-429b-8a21-5a68d855c35a.png)
 
 > <h3>팔로잉 리스트</h3>
+
+![image](https://user-images.githubusercontent.com/43658658/133091720-d4de9f40-658c-4f1f-ad28-3d2647cb882d.png)
 
 ``` mysql
 -- 블루뮤직의 전체 팔로잉 유저 목록
