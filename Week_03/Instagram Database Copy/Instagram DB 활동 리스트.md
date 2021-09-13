@@ -467,3 +467,70 @@ order by lastSecondFollowerTable.followerNo DESC;
 ```
 
 ![image](https://user-images.githubusercontent.com/43658658/133059753-190806ed-34e4-436f-a75a-bfb79eab5538.png)
+
+> <h3>피드별 댓글 활동 리스트</h3>
+
+![image](https://user-images.githubusercontent.com/43658658/133075105-35ccf7b1-9439-4f42-bb08-207a5ea65d94.png)
+
+``` mysql
+-- 피드별 댓글 활동 리스트, 스토리 시청 여부 확인
+select profileImageUrl                       as actUserProfileImage,
+       if(replyUserID in (select storyUserID
+                          from StoryTable
+                          where timestampdiff(day, storyCreatedAt, '2021-09-11 00:00:00') < 1
+                            and 'No' =
+                                if(storyNo in (select storyWatchingStoryNo
+                                               from StoryWatchingTable
+                                               where storyWatchingUserID = 'bllumusic'),
+                                   'Yes', 'No')),
+          'No',
+          'Yes')                             as isStoryWatching,
+       concat(replyUserID, '님이 댓글을 남겼습니다: ') as actReplyUser,
+       replyContent                          as actReplyContent,
+       case
+           when timestampdiff(second, replyCreatedAt, '2021-09-11 00:00:00') < 60
+               then concat(timestampdiff(second, replyCreatedAt, '2021-09-11 00:00:00'), '초')
+           when timestampdiff(minute, replyCreatedAt, '2021-09-11 00:00:00') < 60
+               then concat(timestampdiff(minute, replyCreatedAt, '2021-09-11 00:00:00'), '분')
+           when timestampdiff(hour, replyCreatedAt, '2021-09-11 00:00:00') < 24
+               then concat(timestampdiff(hour, replyCreatedAt, '2021-09-11 00:00:00'), '시간')
+           when timestampdiff(day, replyCreatedAt, '2021-09-11 00:00:00') < 7
+               then concat(timestampdiff(day, replyCreatedAt, '2021-09-11 00:00:00'), '일')
+           else date_format(replyCreatedAt, '%m월 %d일')
+           end                               as actReplyTime,
+       replyIsHeart,    
+       feedFirstUrl.firstUrlPerFeed          as actClickLikeFeedImage
+from ReplyTable
+         inner join ProfileTable
+                    on profileUserID = ReplyTable.replyUserID
+         inner join (select feedImageFeedNo, feedImageUrl as firstUrlPerFeed
+                     from (select *
+                           from FeedImageTable
+                           where feedimageno in
+                                 (select min(feedImageNo) from FeedImageTable group by feedImageFeedNo)
+                             and feedImageUserID = 'bllumusic'
+                           union all
+                           select *
+                           from FeedVideoTable
+                           where feedVideoNo in
+                                 (select min(feedVideoNo) from FeedVideoTable group by feedvideoFeedNo)
+                             and feedvideoUserID = 'bllumusic') as contentUrlPerFeed
+                     where feedImageNo in (select min(feedImageNo)
+                                           from (select *
+                                                 from FeedImageTable
+                                                 where feedimageno in
+                                                       (select min(feedImageNo) from FeedImageTable group by feedImageFeedNo)
+                                                   and feedImageUserID = 'bllumusic'
+                                                 union all
+                                                 select *
+                                                 from FeedVideoTable
+                                                 where feedVideoNo in
+                                                       (select min(feedVideoNo) from FeedVideoTable group by feedvideoFeedNo)
+                                                   and feedvideoUserID = 'bllumusic') as onlyOneUrlPerFeed
+                                           group by feedImageFeedNo)) as feedFirstUrl
+                    on feedFirstUrl.feedImageFeedNo = ReplyTable.replyFeedNo
+where replyFeedNo in (select feedNo from FeedTable where feedHost = 'bllumusic')
+order by replyNo DESC;
+```
+
+![image](https://user-images.githubusercontent.com/43658658/133075033-016b9c7d-2598-4879-80ba-9f5c130c0206.png)
