@@ -353,7 +353,7 @@ order by followerNo DESC;
 
 ![image](https://user-images.githubusercontent.com/43658658/133047395-75cc7422-944a-4f8d-824e-182de09809e6.png)
 
-> <h3>일별로 팔로우 모으기(가장 최근 유저와 두 번째 최근 유저 나타내기)</h3>
+> <h3>일별 팔로우 활동 리스트(가장 최근 유저와 두 번째 최근 유저 나타내기)</h3>
 
 ![image](https://user-images.githubusercontent.com/43658658/133059242-bbe34790-b5ad-4772-adb1-047d3ac32173.png)
 
