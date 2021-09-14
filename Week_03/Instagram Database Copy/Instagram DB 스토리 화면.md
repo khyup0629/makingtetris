@@ -360,6 +360,8 @@ order by storyImageStoryNo DESC;
 
 > <h3>스토리 시청자 목록 화면 상단(컨텐츠, 시청자 수)</h3>
 
+![image](https://user-images.githubusercontent.com/43658658/133205672-a6b5cad6-6ed0-4c55-89eb-ee32475807ff.png)
+
 ``` mysql
 -- 스토리 별 컨텐츠 URL
 select storyImageStoryNo, storyImageUrl
@@ -409,6 +411,8 @@ where storyImageStoryNo = 12;
 
 > <h3>스토리 시청자 목록</h3>
 
+![image](https://user-images.githubusercontent.com/43658658/133205713-2f735aea-6f09-4149-892c-07f20dc5e429.png)
+
 ``` mysql
 -- 내 스토리(12번)를 본 시청자 목록
 select profileImageUrl,
@@ -440,6 +444,8 @@ order by storyWatchingNo DESC;
 ![image](https://user-images.githubusercontent.com/43658658/133205007-e284a723-e583-4475-8e70-7e298628410f.png)
 
 > <h3>하이라이트 화면</h3>
+
+![image](https://user-images.githubusercontent.com/43658658/133205834-c83d840e-3399-4912-99bc-eab837b38f02.png)
 
 ``` mysql
 -- 하이라이트(3번) 화면
