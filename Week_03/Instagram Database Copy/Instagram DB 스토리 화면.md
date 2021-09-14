@@ -356,7 +356,7 @@ order by storyImageStoryNo DESC;
 
 # 스토리 시청자 화면
 
-![image](https://user-images.githubusercontent.com/43658658/133204667-30e5567c-5385-4cd2-8574-3ce21a5aae23.png)
+![image](https://user-images.githubusercontent.com/43658658/133206845-46ae9837-222a-4dfa-9e16-73389bc377c9.png)
 
 > <h3>스토리 시청자 목록 화면 상단(컨텐츠, 시청자 수)</h3>
 
