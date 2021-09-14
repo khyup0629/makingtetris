@@ -353,3 +353,112 @@ order by storyImageStoryNo DESC;
 ```
 
 ![image](https://user-images.githubusercontent.com/43658658/133201316-fa0234ff-cdee-43d6-9e44-1f55315858b7.png)
+
+# 스토리 시청자 화면
+
+![image](https://user-images.githubusercontent.com/43658658/133204667-30e5567c-5385-4cd2-8574-3ce21a5aae23.png)
+
+> <h3>스토리 시청자 목록 화면 상단(컨텐츠, 시청자 수)</h3>
+
+``` mysql
+-- 스토리 별 컨텐츠 URL
+select storyImageStoryNo, storyImageUrl
+from StoryImageTable
+union all
+select storyVideoStoryNo, storyVideoUrl
+from StoryVideoTable
+order by storyImageStoryNo DESC;
+
+-- 내 스토리(12번)를 본 시청자 수
+select storyWatchingStoryNo, count(storyWatchingUserID) as storyWatcher12
+from (select *
+      from StoryWatchingTable
+      where storyWatchingStoryNo = (select storyImageStoryNo
+                                    from StoryImageTable
+                                    where StoryImageTable.storyImageStoryNo = 12
+                                    union all
+                                    select storyVideoStoryNo
+                                    from StoryVideoTable
+                                    where StoryVideoTable.storyVideoStoryNo = 12)) as bllumusicStoryWatcher
+group by storyWatchingStoryNo;
+
+-- 내 스토리(12번) 시청자 목록 화면 상단(컨텐츠와 시청자 수)
+select storyImageUrl, storyWatcher12
+from (select storyImageStoryNo, storyImageUrl
+      from StoryImageTable
+      union all
+      select storyVideoStoryNo, storyVideoUrl
+      from StoryVideoTable
+      order by storyImageStoryNo DESC) as allStoryContent
+         inner join (select storyWatchingStoryNo, count(storyWatchingUserID) as storyWatcher12
+                     from (select *
+                           from StoryWatchingTable
+                           where storyWatchingStoryNo = (select storyImageStoryNo
+                                                         from StoryImageTable
+                                                         where StoryImageTable.storyImageStoryNo = 12
+                                                         union all
+                                                         select storyVideoStoryNo
+                                                         from StoryVideoTable
+                                                         where StoryVideoTable.storyVideoStoryNo = 12)) as bllumusicStoryWatcher
+                     group by storyWatchingStoryNo) as storyWatcher12Table
+                    on storyWatcher12Table.storyWatchingStoryNo = allStoryContent.storyImageStoryNo
+where storyImageStoryNo = 12;
+```
+
+![image](https://user-images.githubusercontent.com/43658658/133204811-121c0e59-e723-4401-b229-7b1a4f2431f6.png)
+
+> <h3>스토리 시청자 목록</h3>
+
+``` mysql
+-- 내 스토리(12번)를 본 시청자 목록
+select profileImageUrl,
+       if(storyWatchingUserID in (select storyUserID
+                                  from StoryTable
+                                  where timestampdiff(day, storyCreatedAt, '2021-09-11 00:00:00') < 1
+                                    and 'No' =
+                                        if(storyNo in (select storyWatchingStoryNo
+                                                       from StoryWatchingTable
+                                                       where storyWatchingUserID = 'bllumusic'),
+                                           'Yes', 'No')),
+          'No',
+          'Yes') as isStoryWatching,
+       profileUserID,
+       profileName
+from StoryWatchingTable
+         inner join ProfileTable
+                    on profileUserID = storyWatchingUserID
+where StoryWatchingTable.storyWatchingStoryNo = (select storyImageStoryNo
+                                                 from StoryImageTable
+                                                 where StoryImageTable.storyImageStoryNo = 12
+                                                 union all
+                                                 select storyVideoStoryNo
+                                                 from StoryVideoTable
+                                                 where StoryVideoTable.storyVideoStoryNo = 12)
+order by storyWatchingNo DESC;
+```
+
+![image](https://user-images.githubusercontent.com/43658658/133205007-e284a723-e583-4475-8e70-7e298628410f.png)
+
+> <h3>하이라이트 화면</h3>
+
+``` mysql
+-- 하이라이트(3번) 화면
+select hlCoverImageUrl,
+       hlTitle,
+       case
+           when timestampdiff(second, hlStoryCreatedAt, '2021-09-11 00:00:00') < 60
+               then concat(timestampdiff(second, hlStoryCreatedAt, '2021-09-11 00:00:00'), '초')
+           when timestampdiff(minute, hlStoryCreatedAt, '2021-09-11 00:00:00') < 60
+               then concat(timestampdiff(minute, hlStoryCreatedAt, '2021-09-11 00:00:00'), '분')
+           when timestampdiff(hour, hlStoryCreatedAt, '2021-09-11 00:00:00') < 24
+               then concat(timestampdiff(hour, hlStoryCreatedAt, '2021-09-11 00:00:00'), '시간')
+           when timestampdiff(day, hlStoryCreatedAt, '2021-09-11 00:00:00') < 7
+               then concat(timestampdiff(day, hlStoryCreatedAt, '2021-09-11 00:00:00'), '일')
+           else concat(timestampdiff(week, hlStoryCreatedAt, '2021-09-11 00:00:00'), '주')
+           end                      as hlStoryCreatedAt,
+       hlContentUrl
+from HighlightTable
+where hlNo = 3;
+```
+
+![image](https://user-images.githubusercontent.com/43658658/133205558-ea98344b-b0d5-4d03-8468-6824649150d1.png)
